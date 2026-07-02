@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Horus Mentoria — Gestão e Desempenho</title>
+  <link rel="icon" type="image/png" href="assets/icone.png" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
@@ -422,12 +423,9 @@
     <!-- Logo -->
     <div style="position:relative;z-index:1;">
       <div style="display:flex;align-items:center;gap:12px;">
-        <div style="width:42px;height:42px;background:var(--color-primary);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <div style="width:42px;height:42px;background:white;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
           <!-- Horus Mentoria Icon -->
-          <svg width="26" height="23" viewBox="0 0 60 54" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <ellipse cx="36" cy="19" rx="19" ry="10.5" stroke="white" stroke-width="7.5" transform="rotate(-42 36 19)"/>
-            <ellipse cx="24" cy="35" rx="19" ry="10.5" stroke="white" stroke-width="7.5" transform="rotate(-42 24 35)"/>
-          </svg>
+          <img src="assets/icone.png" width="26" height="26" alt="Horus Mentoria" style="object-fit:contain;" />
         </div>
         <div>
           <div style="color:white;font-weight:800;font-size:17px;letter-spacing:0.01em;line-height:1.1;">Horus<span style="color:var(--color-primary);">Mentoria</span></div>
@@ -473,19 +471,6 @@
         Controle de IAS e Indicadores Fábrica
       </div>
 
-      <!-- Wordmark rodapé do painel esquerdo -->
-      <div style="margin-top:8px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;gap:12px;">
-        <div style="width:36px;height:36px;background:var(--color-primary);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <svg width="22" height="20" viewBox="0 0 60 54" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <ellipse cx="36" cy="19" rx="19" ry="10.5" stroke="white" stroke-width="7.5" transform="rotate(-42 36 19)"/>
-            <ellipse cx="24" cy="35" rx="19" ry="10.5" stroke="white" stroke-width="7.5" transform="rotate(-42 24 35)"/>
-          </svg>
-        </div>
-        <div>
-          <div style="color:white;font-weight:800;font-size:15px;letter-spacing:0.01em;line-height:1.1;">Horus<span style="color:var(--color-primary);">Mentoria</span></div>
-          <div style="color:rgba(255,255,255,0.35);font-size:9px;font-weight:500;letter-spacing:0.1em;">SISTEMA DE GESTÃO PÓS-VENDA</div>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -493,40 +478,9 @@
   <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:32px;background:white;">
     <div style="width:100%;max-width:400px;">
 
-      <!-- Mobile logo -->
-      <div class="lg-hidden" style="display:flex;align-items:center;gap:12px;margin-bottom:32px;">
-        <div style="width:42px;height:42px;background:var(--color-primary);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <svg width="26" height="23" viewBox="0 0 60 54" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <ellipse cx="36" cy="19" rx="19" ry="10.5" stroke="white" stroke-width="7.5" transform="rotate(-42 36 19)"/>
-            <ellipse cx="24" cy="35" rx="19" ry="10.5" stroke="white" stroke-width="7.5" transform="rotate(-42 24 35)"/>
-          </svg>
-        </div>
-        <div>
-          <div style="font-weight:800;font-size:17px;letter-spacing:0.01em;color:var(--color-slate-900);">Horus<span style="color:var(--color-primary);">Mentoria</span></div>
-          <div style="font-size:9px;font-weight:500;letter-spacing:0.12em;color:var(--color-text-muted);margin-top:1px;">SISTEMA DE GESTÃO</div>
-        </div>
-      </div>
-
       <!-- Avatar / Logo da empresa -->
       <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:28px;">
-        <div class="avatar" role="img" aria-label="Logo Horus Mentoria" style="margin-bottom:12px;background:white;border:2.5px solid var(--color-border);">
-          <svg width="46" height="41" viewBox="0 0 60 54" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <clipPath id="hm-av">
-                <polygon points="0,0 60,0 60,38 0,20"/>
-              </clipPath>
-            </defs>
-            <!-- Orange ring (back) -->
-            <ellipse cx="36" cy="19" rx="19" ry="10.5" stroke="#ed7534" stroke-width="7.5" transform="rotate(-42 36 19)"/>
-            <!-- Blue ring (middle — in front of orange in lower area) -->
-            <ellipse cx="24" cy="35" rx="19" ry="10.5" stroke="#0083b9" stroke-width="7.5" transform="rotate(-42 24 35)"/>
-            <!-- Orange ring (front — clips to upper area, over blue) -->
-            <g clip-path="url(#hm-av)">
-              <ellipse cx="36" cy="19" rx="19" ry="10.5" stroke="#ed7534" stroke-width="7.5" transform="rotate(-42 36 19)"/>
-            </g>
-          </svg>
-        </div>
-        <div style="font-size:13px;font-weight:700;letter-spacing:0.01em;"><span style="color:var(--color-secondary);">Horus</span><span style="color:var(--color-primary);">Mentoria</span></div>
+        <img src="assets/logo.png" alt="Horus Mentoria" style="height:64px;width:auto;object-fit:contain;" />
       </div>
 
       <h2 style="font-size:1.4rem;font-weight:700;color:var(--color-slate-900);margin:0 0 4px;">Bem-vindo de volta</h2>
@@ -583,11 +537,8 @@
     <!-- Sidebar header -->
     <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid rgba(255,255,255,0.06);">
       <div style="display:flex;align-items:center;gap:10px;">
-        <div style="width:34px;height:34px;background:var(--color-primary);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <svg width="20" height="18" viewBox="0 0 60 54" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <ellipse cx="36" cy="19" rx="19" ry="10.5" stroke="white" stroke-width="7.5" transform="rotate(-42 36 19)"/>
-            <ellipse cx="24" cy="35" rx="19" ry="10.5" stroke="white" stroke-width="7.5" transform="rotate(-42 24 35)"/>
-          </svg>
+        <div style="width:34px;height:34px;background:white;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <img src="assets/icone.png" width="20" height="20" alt="Horus Mentoria" style="object-fit:contain;" />
         </div>
         <div>
           <div style="color:white;font-weight:800;font-size:13px;letter-spacing:0.01em;line-height:1.1;">Horus<span style="color:var(--color-primary);">Mentoria</span></div>
