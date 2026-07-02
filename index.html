@@ -278,7 +278,7 @@
       border: 1.5px solid var(--color-border);
       border-radius: var(--border-radius);
       font-family: var(--font-family-base);
-      font-size: var(--font-size-base);
+      font-size: 16px;
       outline: none;
       transition: border-color 0.15s, box-shadow 0.15s;
       background: var(--color-slate-50);
@@ -300,11 +300,34 @@
       font-size: var(--font-size-base);
       font-weight: var(--font-weight-semi);
       cursor: pointer;
-      transition: background 0.15s, transform 0.1s;
+      transition: background 0.15s, transform 0.15s;
     }
-    .login-btn:hover  { background: var(--color-primary-hover); }
+    .login-btn:hover  { background: var(--color-primary-hover); transform: scale(1.02); }
     .login-btn:active { transform: scale(0.98); }
     .login-btn:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+
+    /* Login — cards institucionais */
+    .login-feature-card {
+      background: linear-gradient(135deg, var(--color-teal-400) 0%, var(--color-navy-700) 100%);
+      border-radius: 16px;
+      padding: 14px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 0;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .login-feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 26px rgba(0,0,0,0.32);
+    }
+    .login-feature-card i { color: white; font-size: 17px; }
+    .login-feature-card span { color: white; font-weight: 700; font-size: 10.5px; line-height: 1.35; }
+    .login-feature-cards { grid-template-columns: repeat(4, minmax(0,1fr)); }
+    @media (max-width: 480px) {
+      .login-feature-cards { grid-template-columns: repeat(2, minmax(0,1fr)) !important; }
+    }
 
     /* Avatar */
     .avatar {
@@ -409,81 +432,89 @@
 <!-- ═══════════════════════════════════════════
      LOGIN SCREEN
 ═══════════════════════════════════════════ -->
-<div id="loginScreen" class="min-h-screen flex">
+<div id="loginScreen" class="min-h-screen flex flex-col lg:flex-row fade-in">
 
   <!-- Left panel — branding -->
-  <div class="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 relative overflow-hidden"
-       style="background: var(--color-navy-900);">
+  <div class="w-full lg:w-1/2 order-2 lg:order-1 flex flex-col items-center justify-center p-10 lg:p-12 relative overflow-hidden"
+       style="background: linear-gradient(135deg, var(--color-navy-900) 0%, var(--color-navy-800) 55%, var(--color-navy-700) 100%);">
 
-    <!-- Decorative shapes -->
-    <div style="position:absolute;top:-80px;left:-80px;width:320px;height:320px;border-radius:50%;background:var(--color-primary);opacity:0.08;"></div>
-    <div style="position:absolute;bottom:-100px;right:-60px;width:280px;height:280px;border-radius:50%;background:var(--color-secondary);opacity:0.1;"></div>
-    <div style="position:absolute;top:45%;left:30%;width:160px;height:160px;border-radius:50%;background:var(--color-accent);opacity:0.06;"></div>
+    <!-- Decorative diagonal curves -->
+    <div style="position:absolute;top:-25%;right:-20%;width:75%;height:75%;border-radius:50%;background:radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);"></div>
+    <div style="position:absolute;bottom:-30%;left:-15%;width:85%;height:85%;border-radius:50%;background:radial-gradient(circle, rgba(0,131,185,0.14) 0%, transparent 70%);"></div>
 
-    <!-- Logo -->
-    <div style="position:relative;z-index:1;">
-      <div style="display:flex;align-items:center;gap:12px;">
-        <div style="width:42px;height:42px;background:white;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <!-- Horus Mentoria Icon -->
-          <img src="assets/icone.png" width="26" height="26" alt="Horus Mentoria" style="object-fit:contain;" />
-        </div>
-        <div>
-          <div style="color:white;font-weight:800;font-size:17px;letter-spacing:0.01em;line-height:1.1;">Horus<span style="color:var(--color-primary);">Mentoria</span></div>
-          <div style="color:rgba(255,255,255,0.45);font-size:9px;font-weight:500;letter-spacing:0.12em;margin-top:1px;">SISTEMA DE GESTÃO</div>
-        </div>
-      </div>
+    <!-- Corner brand decoration — inferior esquerdo -->
+    <div style="position:absolute;bottom:20px;left:20px;display:flex;align-items:flex-end;pointer-events:none;">
+      <img src="assets/icone.png" style="width:64px;filter:brightness(0) invert(1);opacity:0.16;margin-right:-18px;" alt="" />
+      <img src="assets/icone.png" style="width:40px;filter:brightness(0) invert(1);opacity:0.12;" alt="" />
     </div>
 
-    <!-- Hero -->
-    <div style="position:relative;z-index:1;">
-      <h1 style="color:white;font-size:2.4rem;font-weight:800;line-height:1.15;margin:0 0 16px;">
-        Gestão e<br/>Desempenho<br/><span style="color:var(--color-primary);">Pós-Venda</span>
+    <!-- Conteúdo central -->
+    <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;text-align:center;max-width:400px;">
+
+      <!-- Logo ilustrado (gráfico de desempenho) -->
+      <svg width="80" height="60" viewBox="0 0 84 64" fill="none" style="margin-bottom:18px;">
+        <defs>
+          <linearGradient id="loginWaveGrad" x1="0" y1="64" x2="84" y2="0">
+            <stop offset="0%" style="stop-color:var(--color-secondary);"/>
+            <stop offset="100%" style="stop-color:var(--color-teal-400);"/>
+          </linearGradient>
+        </defs>
+        <g stroke="rgba(255,255,255,0.14)" stroke-width="1">
+          <line x1="0" y1="16" x2="84" y2="16"/>
+          <line x1="0" y1="32" x2="84" y2="32"/>
+          <line x1="0" y1="48" x2="84" y2="48"/>
+          <line x1="21" y1="0" x2="21" y2="64"/>
+          <line x1="42" y1="0" x2="42" y2="64"/>
+          <line x1="63" y1="0" x2="63" y2="64"/>
+        </g>
+        <path d="M2 46 C 14 46, 14 22, 26 22 C 36 22, 36 44, 46 44 C 54 44, 56 8, 66 8 C 74 8, 76 20, 82 20"
+              stroke="url(#loginWaveGrad)" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+        <circle cx="66" cy="8" r="4.5" fill="white"/>
+        <circle cx="66" cy="8" r="4.5" fill="none" style="stroke:var(--color-teal-400);" stroke-width="1.5"/>
+      </svg>
+
+      <h1 style="margin:0 0 14px;line-height:1.2;">
+        <span style="display:block;color:white;font-size:1.7rem;font-weight:800;">Gestão e Desempenho</span>
+        <span style="display:block;color:var(--color-teal-300);font-size:2rem;font-weight:500;">Pós-Venda</span>
       </h1>
-      <p style="color:#7e8db8;font-size:13px;line-height:1.7;max-width:300px;">
-        Controle completo de KPIs, simuladores de faturamento, metas e diagnóstico de desempenho para sua rede de concessionárias.
+
+      <p style="color:rgba(255,255,255,0.7);font-size:13px;line-height:1.7;max-width:300px;margin:0 0 32px;">
+        Controle completo de KPI's, simuladores de faturamento, metas e diagnóstico de desempenho para sua rede de concessionárias.
       </p>
-    </div>
 
-    <!-- Features list -->
-    <div style="position:relative;z-index:1;display:flex;flex-direction:column;gap:12px;">
-      <div style="display:flex;align-items:center;gap:12px;color:#7e8db8;font-size:13px;">
-        <div style="width:22px;height:22px;background:rgba(237,117,52,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <i class="fa-solid fa-check" style="color:var(--color-primary);font-size:9px;"></i>
+      <!-- Cards -->
+      <div class="login-feature-cards" style="display:grid;gap:12px;width:100%;">
+        <div class="login-feature-card">
+          <i class="fa-solid fa-chart-column"></i>
+          <span>Dashboard gerencial consolidado</span>
         </div>
-        Dashboard Gerencial Consolidado
-      </div>
-      <div style="display:flex;align-items:center;gap:12px;color:#7e8db8;font-size:13px;">
-        <div style="width:22px;height:22px;background:rgba(237,117,52,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <i class="fa-solid fa-check" style="color:var(--color-primary);font-size:9px;"></i>
+        <div class="login-feature-card">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span>Diagnóstico de desempenho da oficina</span>
         </div>
-        Diagnóstico de Desempenho da Oficina
-      </div>
-      <div style="display:flex;align-items:center;gap:12px;color:#7e8db8;font-size:13px;">
-        <div style="width:22px;height:22px;background:rgba(237,117,52,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <i class="fa-solid fa-check" style="color:var(--color-primary);font-size:9px;"></i>
+        <div class="login-feature-card">
+          <i class="fa-solid fa-braille"></i>
+          <span>Simuladores de metas e bonificações</span>
         </div>
-        Simuladores de Metas e Bonificações
-      </div>
-      <div style="display:flex;align-items:center;gap:12px;color:#7e8db8;font-size:13px;">
-        <div style="width:22px;height:22px;background:rgba(237,117,52,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <i class="fa-solid fa-check" style="color:var(--color-primary);font-size:9px;"></i>
+        <div class="login-feature-card">
+          <i class="fa-solid fa-terminal"></i>
+          <span>Controle de IAS e indicadores fábrica</span>
         </div>
-        Controle de IAS e Indicadores Fábrica
       </div>
-
     </div>
   </div>
 
   <!-- Right panel — form -->
-  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:32px;background:white;">
-    <div style="width:100%;max-width:400px;">
+  <div class="w-full lg:w-1/2 order-1 lg:order-2 relative overflow-hidden" style="display:flex;align-items:center;justify-content:center;padding:32px;background:white;">
 
-      <!-- Avatar / Logo da empresa -->
-      <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:28px;">
-        <img src="assets/logo.png" alt="Horus Mentoria" style="height:64px;width:auto;object-fit:contain;" />
-      </div>
+    <!-- Corner brand decoration — superior direito -->
+    <div style="position:absolute;top:24px;right:24px;pointer-events:none;">
+      <img src="assets/icone.png" style="width:48px;filter:grayscale(1) brightness(1.6);opacity:0.14;" alt="" />
+    </div>
 
-      <h2 style="font-size:1.4rem;font-weight:700;color:var(--color-slate-900);margin:0 0 4px;">Bem-vindo de volta</h2>
+    <div style="width:100%;max-width:440px;position:relative;z-index:1;">
+
+      <h2 style="font-size:1.65rem;font-weight:800;color:var(--color-slate-900);margin:0 0 6px;">Bem-vindo de volta</h2>
       <p style="font-size:13px;color:var(--color-text-muted);margin:0 0 24px;">Acesse sua concessionária e gerencie seus indicadores</p>
 
       <div style="display:flex;flex-direction:column;gap:14px;">
@@ -504,11 +535,11 @@
           <label for="loginSenha" style="display:block;font-size:11px;font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Senha</label>
           <input class="login-input" id="loginSenha" type="password" placeholder="••••••••" value="demo1234" autocomplete="current-password" />
         </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px 10px;">
           <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--color-text-muted);cursor:pointer;">
             <input type="checkbox" style="accent-color:var(--color-primary);" checked /> Lembrar acesso
           </label>
-          <button type="button" onclick="esqueceuSenha()" style="background:none;border:none;cursor:pointer;color:var(--color-primary);font-size:13px;font-weight:600;font-family:var(--font-family-base);padding:0;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Esqueci a senha</button>
+          <button type="button" onclick="esqueceuSenha()" style="background:none;border:none;cursor:pointer;color:var(--color-primary);font-size:13px;font-weight:600;font-family:var(--font-family-base);padding:0;white-space:nowrap;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Esqueci a senha</button>
         </div>
         <button class="login-btn" type="button" onclick="doLogin()" style="margin-top:4px;">
           <i class="fa-solid fa-arrow-right-to-bracket" style="margin-right:8px;"></i>Entrar no Sistema
@@ -518,6 +549,10 @@
       <p style="text-align:center;font-size:11px;color:var(--color-text-light);margin-top:28px;line-height:1.6;">
         © 2026 Horus Mentoria · Sistema de Gestão Pós-Venda<br/>Acesso restrito a usuários autorizados
       </p>
+
+      <div style="display:flex;justify-content:center;margin-top:16px;">
+        <img src="assets/logo.png" alt="Horus Mentoria" style="height:36px;width:auto;object-fit:contain;" />
+      </div>
     </div>
   </div>
 </div>
