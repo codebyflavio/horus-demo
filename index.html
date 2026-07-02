@@ -1,0 +1,1871 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Horus Mentoria — Gestão e Desempenho</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    /* ─────────────────────────────────────────
+       DESIGN TOKENS
+    ───────────────────────────────────────── */
+    :root {
+      /* Primitivos */
+      --color-orange-500: #ed7534;
+      --color-orange-600: #d4631f;
+      --color-blue-500:   #0083b9;
+      --color-blue-600:   #006a96;
+      --color-navy-900:   #1c2241;
+      --color-navy-800:   #232b52;
+      --color-navy-700:   #2d3666;
+      --color-teal-400:   #6abfaf;
+      --color-teal-300:   #8fd0c3;
+      --color-slate-50:   #f8fafc;
+      --color-slate-100:  #f1f5f9;
+      --color-slate-200:  #e2e8f0;
+      --color-slate-400:  #94a3b8;
+      --color-slate-500:  #64748b;
+      --color-slate-700:  #334155;
+      --color-slate-900:  #0f172a;
+      --color-white:      #ffffff;
+
+      /* Semânticos */
+      --color-primary:        var(--color-orange-500);
+      --color-primary-hover:  var(--color-orange-600);
+      --color-secondary:      var(--color-blue-500);
+      --color-secondary-hover:var(--color-blue-600);
+      --color-bg-dark:        var(--color-navy-900);
+      --color-bg-sidebar:     var(--color-navy-900);
+      --color-accent:         var(--color-teal-400);
+      --color-bg-page:        var(--color-slate-100);
+      --color-text-base:      var(--color-slate-700);
+      --color-text-muted:     var(--color-slate-500);
+      --color-text-light:     var(--color-slate-400);
+      --color-border:         var(--color-slate-200);
+      --color-card-bg:        var(--color-white);
+
+      /* Status */
+      --color-success: #10b981;
+      --color-warning: #f59e0b;
+      --color-danger:  #ef4444;
+
+      /* Tipografia */
+      --font-family-base: 'Poppins', sans-serif;
+      --font-size-xs:   0.75rem;
+      --font-size-sm:   0.8125rem;
+      --font-size-base: 0.875rem;
+      --font-size-lg:   1rem;
+      --font-size-xl:   1.25rem;
+      --font-size-2xl:  1.5rem;
+      --font-weight-normal: 400;
+      --font-weight-medium: 500;
+      --font-weight-semi:   600;
+      --font-weight-bold:   700;
+      --font-weight-black:  800;
+
+      /* Espaçamentos */
+      --spacing-1: 0.25rem;
+      --spacing-2: 0.5rem;
+      --spacing-3: 0.75rem;
+      --spacing-4: 1rem;
+      --spacing-5: 1.25rem;
+      --spacing-6: 1.5rem;
+      --spacing-8: 2rem;
+
+      /* Bordas */
+      --border-radius-sm: 0.375rem;
+      --border-radius:    0.625rem;
+      --border-radius-lg: 0.875rem;
+      --border-radius-xl: 1rem;
+      --border-radius-full: 9999px;
+
+      /* Sombras */
+      --shadow-card: 0 1px 4px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-lg:   0 8px 24px rgba(0,0,0,0.12);
+    }
+
+    /* ─────────────────────────────────────────
+       BASE
+    ───────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: var(--font-family-base);
+      background: var(--color-bg-page);
+      color: var(--color-text-base);
+      margin: 0;
+    }
+
+    /* ─────────────────────────────────────────
+       SIDEBAR
+    ───────────────────────────────────────── */
+    #sidebar {
+      background: var(--color-bg-sidebar);
+      transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 20px;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      color: #7e8db8;
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      transition: all 0.15s;
+      border-left: 3px solid transparent;
+      margin: 2px 12px;
+    }
+    .nav-item:hover { background: rgba(255,255,255,0.06); color: #c8d0e8; }
+    .nav-item.active {
+      background: rgba(237,117,52,0.15);
+      color: var(--color-orange-500);
+      border-left-color: var(--color-primary);
+    }
+    .nav-item:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+
+    /* ─────────────────────────────────────────
+       HEADER
+    ───────────────────────────────────────── */
+    .app-header {
+      background: var(--color-white);
+      border-bottom: 1px solid var(--color-border);
+      height: 56px;
+      display: flex;
+      align-items: center;
+      padding: 0 var(--spacing-5);
+      position: sticky;
+      top: 0;
+      z-index: 30;
+    }
+
+    /* ─────────────────────────────────────────
+       BUTTONS
+    ───────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-2);
+      font-family: var(--font-family-base);
+      font-weight: var(--font-weight-semi);
+      font-size: var(--font-size-sm);
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+      padding: 8px 16px;
+      text-decoration: none;
+    }
+    .btn:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+    .btn:active { transform: scale(0.97); }
+
+    .btn-primary {
+      background: var(--color-primary);
+      color: var(--color-white);
+    }
+    .btn-primary:hover { background: var(--color-primary-hover); }
+
+    .btn-secondary {
+      background: var(--color-secondary);
+      color: var(--color-white);
+    }
+    .btn-secondary:hover { background: var(--color-secondary-hover); }
+
+    .btn-outline {
+      background: var(--color-white);
+      color: var(--color-text-base);
+      border: 1.5px solid var(--color-border);
+    }
+    .btn-outline:hover { border-color: var(--color-primary); color: var(--color-primary); }
+
+    /* ─────────────────────────────────────────
+       CARDS
+    ───────────────────────────────────────── */
+    .card {
+      background: var(--color-card-bg);
+      border-radius: var(--border-radius-lg);
+      padding: var(--spacing-5);
+      box-shadow: var(--shadow-card);
+    }
+
+    .kpi-card { background: var(--color-card-bg); border-radius: var(--border-radius-lg); padding: 20px 22px; box-shadow: var(--shadow-card); }
+    .kpi-label { font-size: var(--font-size-xs); color: var(--color-text-muted); font-weight: var(--font-weight-semi); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+    .kpi-value { font-size: 1.6rem; font-weight: var(--font-weight-bold); color: var(--color-slate-900); line-height: 1; }
+    .kpi-delta { font-size: var(--font-size-xs); font-weight: var(--font-weight-semi); margin-top: 6px; }
+    .kpi-delta.up   { color: var(--color-success); }
+    .kpi-delta.down { color: var(--color-danger); }
+    .kpi-icon { width: 40px; height: 40px; border-radius: var(--border-radius); display: flex; align-items: center; justify-content: center; font-size: 16px; }
+
+    /* ─────────────────────────────────────────
+       CHART CARD
+    ───────────────────────────────────────── */
+    .chart-card { background: var(--color-card-bg); border-radius: var(--border-radius-lg); padding: var(--spacing-5); box-shadow: var(--shadow-card); }
+    .chart-title { font-size: var(--font-size-base); font-weight: var(--font-weight-semi); color: var(--color-slate-900); margin-bottom: 2px; }
+    .chart-sub   { font-size: var(--font-size-xs); color: var(--color-text-light); margin-bottom: var(--spacing-4); }
+
+    /* ─────────────────────────────────────────
+       PROGRESS
+    ───────────────────────────────────────── */
+    .progress-bar  { height: 7px; background: var(--color-border); border-radius: var(--border-radius-full); overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: var(--border-radius-full); transition: width 0.8s ease; }
+
+    /* ─────────────────────────────────────────
+       TABS
+    ───────────────────────────────────────── */
+    .tab-btn {
+      padding: 7px 15px;
+      font-family: var(--font-family-base);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semi);
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      color: var(--color-text-muted);
+      background: transparent;
+      border: none;
+      transition: all 0.15s;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .tab-btn:hover { background: var(--color-slate-100); color: var(--color-primary); }
+    .tab-btn.active { background: var(--color-primary); color: var(--color-white); }
+    .tab-btn:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ─────────────────────────────────────────
+       BADGES / STATUS
+    ───────────────────────────────────────── */
+    .badge { font-size: 10px; font-weight: var(--font-weight-bold); padding: 3px 8px; border-radius: var(--border-radius-sm); white-space: nowrap; }
+    .badge-green  { background: #dcfce7; color: #15803d; }
+    .badge-yellow { background: #fef3c7; color: #b45309; }
+    .badge-red    { background: #fee2e2; color: #b91c1c; }
+    .badge-blue   { background: #dbeafe; color: #1d4ed8; }
+    .badge-teal   { background: #ccfbf1; color: #0f766e; }
+
+    /* ─────────────────────────────────────────
+       TABLE
+    ───────────────────────────────────────── */
+    .data-table { width: 100%; border-collapse: collapse; font-size: var(--font-size-sm); }
+    .data-table th {
+      background: var(--color-slate-50);
+      color: var(--color-text-muted);
+      font-weight: var(--font-weight-semi);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-size: 10px;
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .data-table td { padding: 11px 14px; border-bottom: 1px solid var(--color-slate-50); color: var(--color-text-base); }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tbody tr:hover td { background: var(--color-slate-50); }
+
+    /* ─────────────────────────────────────────
+       LOGIN
+    ───────────────────────────────────────── */
+    .login-input {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid var(--color-border);
+      border-radius: var(--border-radius);
+      font-family: var(--font-family-base);
+      font-size: var(--font-size-base);
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      background: var(--color-slate-50);
+      color: var(--color-slate-900);
+    }
+    .login-input:focus {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px rgba(237,117,52,0.14);
+      background: var(--color-white);
+    }
+    .login-btn {
+      width: 100%;
+      padding: 13px;
+      background: var(--color-primary);
+      color: var(--color-white);
+      border: none;
+      border-radius: var(--border-radius);
+      font-family: var(--font-family-base);
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-semi);
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .login-btn:hover  { background: var(--color-primary-hover); }
+    .login-btn:active { transform: scale(0.98); }
+    .login-btn:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+
+    /* Avatar */
+    .avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: var(--border-radius-full);
+      border: 3px solid var(--color-white);
+      box-shadow: var(--shadow-lg);
+      object-fit: cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--color-primary);
+      font-size: 28px;
+      color: white;
+    }
+
+    /* Score ring */
+    .score-ring { position: relative; width: 160px; height: 160px; }
+    .score-ring svg { transform: rotate(-90deg); }
+    .score-ring .score-text { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+    /* ─────────────────────────────────────────
+       ANIMATIONS
+    ───────────────────────────────────────── */
+    .fade-in  { animation: fadeIn  0.25s ease-out both; }
+    .slide-in { animation: slideIn 0.3s  ease-out both; }
+    @keyframes fadeIn  { from { opacity:0; transform:translateY(8px);  } to { opacity:1; transform:translateY(0);  } }
+    @keyframes slideIn { from { opacity:0; transform:translateX(-8px); } to { opacity:1; transform:translateX(0); } }
+
+    /* ─────────────────────────────────────────
+       SIDEBAR OVERLAY (MOBILE)
+    ───────────────────────────────────────── */
+    #sidebar-overlay { display: none; }
+    #sidebar-overlay.show { display: block; }
+
+    /* ─────────────────────────────────────────
+       SCROLLBAR
+    ───────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--color-slate-200); border-radius: var(--border-radius-full); }
+
+    /* ─────────────────────────────────────────
+       TOAST
+    ───────────────────────────────────────── */
+    #toast-container { position:fixed; bottom:24px; right:24px; z-index:9999; display:flex; flex-direction:column; gap:10px; pointer-events:none; }
+    .toast { display:flex; align-items:center; gap:12px; padding:13px 18px; border-radius:var(--border-radius-lg); background:white; box-shadow:var(--shadow-lg); font-size:var(--font-size-sm); font-weight:var(--font-weight-medium); color:var(--color-slate-900); pointer-events:all; animation:toastIn 0.3s ease-out both; max-width:340px; border-left:4px solid var(--color-success); }
+    .toast.toast-error   { border-left-color:var(--color-danger); }
+    .toast.toast-info    { border-left-color:var(--color-secondary); }
+    .toast.toast-warning { border-left-color:var(--color-warning); }
+    .toast.fade-out { animation:toastOut 0.3s ease-in both; }
+    @keyframes toastIn  { from { opacity:0; transform:translateX(40px); } to { opacity:1; transform:translateX(0); } }
+    @keyframes toastOut { from { opacity:1; transform:translateX(0); } to { opacity:0; transform:translateX(40px); } }
+
+    /* ─────────────────────────────────────────
+       DROPDOWN
+    ───────────────────────────────────────── */
+    .dropdown-panel { position:absolute; top:calc(100% + 8px); right:0; background:white; border-radius:var(--border-radius-lg); box-shadow:var(--shadow-lg); border:1px solid var(--color-border); z-index:200; min-width:240px; animation:fadeIn 0.15s ease-out both; }
+    .dropdown-panel.hidden { display:none; }
+    .dropdown-item { display:flex; align-items:center; gap:10px; padding:10px 16px; font-size:var(--font-size-sm); color:var(--color-text-base); cursor:pointer; transition:background 0.12s; border:none; background:none; width:100%; font-family:var(--font-family-base); font-weight:var(--font-weight-medium); text-align:left; }
+    .dropdown-item:hover { background:var(--color-slate-50); color:var(--color-primary); }
+
+    /* ─────────────────────────────────────────
+       MODAL
+    ───────────────────────────────────────── */
+    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:300; display:flex; align-items:center; justify-content:center; padding:20px; }
+    .modal-overlay.hidden { display:none; }
+    .modal-box { background:white; border-radius:var(--border-radius-xl); box-shadow:var(--shadow-lg); width:100%; max-width:520px; padding:28px; animation:fadeIn 0.2s ease-out both; max-height:90vh; overflow-y:auto; }
+    .modal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; }
+    .modal-close { background:none; border:none; cursor:pointer; color:var(--color-text-muted); font-size:18px; transition:color 0.15s; padding:4px; }
+    .modal-close:hover { color:var(--color-danger); }
+
+    /* ─────────────────────────────────────────
+       FORM HELPERS
+    ───────────────────────────────────────── */
+    .form-group { display:flex; flex-direction:column; gap:6px; }
+    .form-label { font-size:10px; font-weight:700; color:var(--color-text-muted); text-transform:uppercase; letter-spacing:0.06em; }
+    .form-input { border:1.5px solid var(--color-border); border-radius:var(--border-radius); padding:9px 12px; font-family:var(--font-family-base); font-size:var(--font-size-sm); outline:none; color:var(--color-slate-900); transition:border-color 0.15s; background:white; }
+    .form-input:focus { border-color:var(--color-primary); box-shadow:0 0 0 3px rgba(237,117,52,0.1); }
+    .form-select { appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M2 5l6 6 6-6' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; background-size:14px; padding-right:32px; }
+
+    /* ─────────────────────────────────────────
+       RESPONSIVE
+    ───────────────────────────────────────── */
+    @media (max-width: 1023px) {
+      #sidebar { position: fixed; top: 0; left: 0; bottom: 0; z-index: 50; transform: translateX(-100%); }
+      #sidebar.open { transform: translateX(0); }
+      #main-content { margin-left: 0 !important; }
+    }
+
+    @media (max-width: 640px) {
+      .kpi-value { font-size: 1.3rem; }
+      .card, .chart-card, .kpi-card { padding: var(--spacing-4); }
+    }
+  </style>
+</head>
+<body>
+
+<div id="toast-container"></div>
+
+<!-- ═══════════════════════════════════════════
+     LOGIN SCREEN
+═══════════════════════════════════════════ -->
+<div id="loginScreen" class="min-h-screen flex">
+
+  <!-- Left panel — branding -->
+  <div class="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 relative overflow-hidden"
+       style="background: var(--color-navy-900);">
+
+    <!-- Decorative shapes -->
+    <div style="position:absolute;top:-80px;left:-80px;width:320px;height:320px;border-radius:50%;background:var(--color-primary);opacity:0.08;"></div>
+    <div style="position:absolute;bottom:-100px;right:-60px;width:280px;height:280px;border-radius:50%;background:var(--color-secondary);opacity:0.1;"></div>
+    <div style="position:absolute;top:45%;left:30%;width:160px;height:160px;border-radius:50%;background:var(--color-accent);opacity:0.06;"></div>
+
+    <!-- Logo -->
+    <div style="position:relative;z-index:1;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:42px;height:42px;background:var(--color-primary);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <!-- Horus Mentoria Icon -->
+          <svg width="26" height="23" viewBox="0 0 60 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="36" cy="19" rx="19" ry="10.5" stroke="white" stroke-width="7.5" transform="rotate(-42 36 19)"/>
+            <ellipse cx="24" cy="35" rx="19" ry="10.5" stroke="white" stroke-width="7.5" transform="rotate(-42 24 35)"/>
+          </svg>
+        </div>
+        <div>
+          <div style="color:white;font-weight:800;font-size:17px;letter-spacing:0.01em;line-height:1.1;">Horus<span style="color:var(--color-primary);">Mentoria</span></div>
+          <div style="color:rgba(255,255,255,0.45);font-size:9px;font-weight:500;letter-spacing:0.12em;margin-top:1px;">SISTEMA DE GESTÃO</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hero -->
+    <div style="position:relative;z-index:1;">
+      <h1 style="color:white;font-size:2.4rem;font-weight:800;line-height:1.15;margin:0 0 16px;">
+        Gestão e<br/>Desempenho<br/><span style="color:var(--color-primary);">Pós-Venda</span>
+      </h1>
+      <p style="color:#7e8db8;font-size:13px;line-height:1.7;max-width:300px;">
+        Controle completo de KPIs, simuladores de faturamento, metas e diagnóstico de desempenho para sua rede de concessionárias.
+      </p>
+    </div>
+
+    <!-- Features list -->
+    <div style="position:relative;z-index:1;display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;align-items:center;gap:12px;color:#7e8db8;font-size:13px;">
+        <div style="width:22px;height:22px;background:rgba(237,117,52,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <i class="fa-solid fa-check" style="color:var(--color-primary);font-size:9px;"></i>
+        </div>
+        Dashboard Gerencial Consolidado
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;color:#7e8db8;font-size:13px;">
+        <div style="width:22px;height:22px;background:rgba(237,117,52,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <i class="fa-solid fa-check" style="color:var(--color-primary);font-size:9px;"></i>
+        </div>
+        Diagnóstico de Desempenho da Oficina
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;color:#7e8db8;font-size:13px;">
+        <div style="width:22px;height:22px;background:rgba(237,117,52,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <i class="fa-solid fa-check" style="color:var(--color-primary);font-size:9px;"></i>
+        </div>
+        Simuladores de Metas e Bonificações
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;color:#7e8db8;font-size:13px;">
+        <div style="width:22px;height:22px;background:rgba(237,117,52,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <i class="fa-solid fa-check" style="color:var(--color-primary);font-size:9px;"></i>
+        </div>
+        Controle de IAS e Indicadores Fábrica
+      </div>
+
+      <!-- Wordmark rodapé do painel esquerdo -->
+      <div style="margin-top:8px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;gap:12px;">
+        <div style="width:36px;height:36px;background:var(--color-primary);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="22" height="20" viewBox="0 0 60 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="36" cy="19" rx="19" ry="10.5" stroke="white" stroke-width="7.5" transform="rotate(-42 36 19)"/>
+            <ellipse cx="24" cy="35" rx="19" ry="10.5" stroke="white" stroke-width="7.5" transform="rotate(-42 24 35)"/>
+          </svg>
+        </div>
+        <div>
+          <div style="color:white;font-weight:800;font-size:15px;letter-spacing:0.01em;line-height:1.1;">Horus<span style="color:var(--color-primary);">Mentoria</span></div>
+          <div style="color:rgba(255,255,255,0.35);font-size:9px;font-weight:500;letter-spacing:0.1em;">SISTEMA DE GESTÃO PÓS-VENDA</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right panel — form -->
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:32px;background:white;">
+    <div style="width:100%;max-width:400px;">
+
+      <!-- Mobile logo -->
+      <div class="lg-hidden" style="display:flex;align-items:center;gap:12px;margin-bottom:32px;">
+        <div style="width:42px;height:42px;background:var(--color-primary);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="26" height="23" viewBox="0 0 60 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="36" cy="19" rx="19" ry="10.5" stroke="white" stroke-width="7.5" transform="rotate(-42 36 19)"/>
+            <ellipse cx="24" cy="35" rx="19" ry="10.5" stroke="white" stroke-width="7.5" transform="rotate(-42 24 35)"/>
+          </svg>
+        </div>
+        <div>
+          <div style="font-weight:800;font-size:17px;letter-spacing:0.01em;color:var(--color-slate-900);">Horus<span style="color:var(--color-primary);">Mentoria</span></div>
+          <div style="font-size:9px;font-weight:500;letter-spacing:0.12em;color:var(--color-text-muted);margin-top:1px;">SISTEMA DE GESTÃO</div>
+        </div>
+      </div>
+
+      <!-- Avatar / Logo da empresa -->
+      <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:28px;">
+        <div class="avatar" role="img" aria-label="Logo Horus Mentoria" style="margin-bottom:12px;background:white;border:2.5px solid var(--color-border);">
+          <svg width="46" height="41" viewBox="0 0 60 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <clipPath id="hm-av">
+                <polygon points="0,0 60,0 60,38 0,20"/>
+              </clipPath>
+            </defs>
+            <!-- Orange ring (back) -->
+            <ellipse cx="36" cy="19" rx="19" ry="10.5" stroke="#ed7534" stroke-width="7.5" transform="rotate(-42 36 19)"/>
+            <!-- Blue ring (middle — in front of orange in lower area) -->
+            <ellipse cx="24" cy="35" rx="19" ry="10.5" stroke="#0083b9" stroke-width="7.5" transform="rotate(-42 24 35)"/>
+            <!-- Orange ring (front — clips to upper area, over blue) -->
+            <g clip-path="url(#hm-av)">
+              <ellipse cx="36" cy="19" rx="19" ry="10.5" stroke="#ed7534" stroke-width="7.5" transform="rotate(-42 36 19)"/>
+            </g>
+          </svg>
+        </div>
+        <div style="font-size:13px;font-weight:700;letter-spacing:0.01em;"><span style="color:var(--color-secondary);">Horus</span><span style="color:var(--color-primary);">Mentoria</span></div>
+      </div>
+
+      <h2 style="font-size:1.4rem;font-weight:700;color:var(--color-slate-900);margin:0 0 4px;">Bem-vindo de volta</h2>
+      <p style="font-size:13px;color:var(--color-text-muted);margin:0 0 24px;">Acesse sua concessionária e gerencie seus indicadores</p>
+
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div>
+          <label for="loginConcessionaria" style="display:block;font-size:11px;font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Concessionária</label>
+          <select class="login-input" id="loginConcessionaria">
+            <option>Concessionária Alpha — Mercedes-Benz C&O</option>
+            <option>Concessionária Beta — Mercedes-Benz Vans</option>
+            <option>Concessionária Gamma — Mercedes-Benz C&O</option>
+            <option>Concessionária Delta — Mercedes-Benz C&O</option>
+          </select>
+        </div>
+        <div>
+          <label for="loginEmail" style="display:block;font-size:11px;font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">E-mail</label>
+          <input class="login-input" id="loginEmail" type="email" placeholder="seu@email.com" value="gerente@demo.horus.com.br" autocomplete="email" />
+        </div>
+        <div>
+          <label for="loginSenha" style="display:block;font-size:11px;font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Senha</label>
+          <input class="login-input" id="loginSenha" type="password" placeholder="••••••••" value="demo1234" autocomplete="current-password" />
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--color-text-muted);cursor:pointer;">
+            <input type="checkbox" style="accent-color:var(--color-primary);" checked /> Lembrar acesso
+          </label>
+          <button type="button" onclick="esqueceuSenha()" style="background:none;border:none;cursor:pointer;color:var(--color-primary);font-size:13px;font-weight:600;font-family:var(--font-family-base);padding:0;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">Esqueci a senha</button>
+        </div>
+        <button class="login-btn" type="button" onclick="doLogin()" style="margin-top:4px;">
+          <i class="fa-solid fa-arrow-right-to-bracket" style="margin-right:8px;"></i>Entrar no Sistema
+        </button>
+      </div>
+
+      <p style="text-align:center;font-size:11px;color:var(--color-text-light);margin-top:28px;line-height:1.6;">
+        © 2026 Horus Mentoria · Sistema de Gestão Pós-Venda<br/>Acesso restrito a usuários autorizados
+      </p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════
+     APP SCREEN
+═══════════════════════════════════════════ -->
+<div id="appScreen" class="hidden" style="min-height:100vh;">
+
+  <!-- Sidebar overlay (mobile) -->
+  <div id="sidebar-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:40;" onclick="closeSidebar()"></div>
+
+  <!-- Sidebar -->
+  <aside id="sidebar" style="width:256px;display:flex;flex-direction:column;height:100%;position:fixed;top:0;left:0;bottom:0;z-index:20;">
+
+    <!-- Sidebar header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid rgba(255,255,255,0.06);">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:34px;height:34px;background:var(--color-primary);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="20" height="18" viewBox="0 0 60 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="36" cy="19" rx="19" ry="10.5" stroke="white" stroke-width="7.5" transform="rotate(-42 36 19)"/>
+            <ellipse cx="24" cy="35" rx="19" ry="10.5" stroke="white" stroke-width="7.5" transform="rotate(-42 24 35)"/>
+          </svg>
+        </div>
+        <div>
+          <div style="color:white;font-weight:800;font-size:13px;letter-spacing:0.01em;line-height:1.1;">Horus<span style="color:var(--color-primary);">Mentoria</span></div>
+          <div style="color:rgba(255,255,255,0.35);font-size:8px;font-weight:500;letter-spacing:0.1em;margin-top:1px;">GESTÃO PÓS-VENDA</div>
+        </div>
+      </div>
+      <button type="button" class="lg:hidden" onclick="closeSidebar()" style="background:none;border:none;color:#7e8db8;cursor:pointer;font-size:16px;display:none;" aria-label="Fechar menu">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- Concessionária badge -->
+    <div style="margin:14px 12px 6px;background:rgba(255,255,255,0.05);border-radius:var(--border-radius);padding:10px 12px;display:flex;align-items:center;gap:10px;">
+      <div id="sidebarAvatar" style="width:36px;height:36px;border-radius:var(--border-radius-sm);background:var(--color-navy-700);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700;color:var(--color-primary);font-size:14px;border:1px solid rgba(255,255,255,0.1);">A</div>
+      <div style="min-width:0;">
+        <div style="color:#5a6a9a;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;margin-bottom:2px;">Concessionária</div>
+        <div id="sidebarConcessionaria" style="color:white;font-size:12px;font-weight:600;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Concessionária Alpha</div>
+      </div>
+    </div>
+
+    <!-- Nav -->
+    <nav style="flex:1;overflow-y:auto;padding:8px 0;margin-top:8px;" aria-label="Navegação principal">
+      <div style="padding:6px 20px 4px;color:#3d4f7a;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.14em;">Módulos</div>
+
+      <button type="button" class="nav-item active" data-module="dashboard" onclick="showModule('dashboard')" style="width:calc(100% - 24px);">
+        <i class="fa-solid fa-gauge-high" style="width:16px;text-align:center;"></i>
+        <span>Dashboard Gerencial</span>
+      </button>
+      <button type="button" class="nav-item" data-module="diagnostico" onclick="showModule('diagnostico')" style="width:calc(100% - 24px);">
+        <i class="fa-solid fa-stethoscope" style="width:16px;text-align:center;"></i>
+        <span>Diagnóstico da Oficina</span>
+      </button>
+      <button type="button" class="nav-item" data-module="metas" onclick="showModule('metas')" style="width:calc(100% - 24px);">
+        <i class="fa-solid fa-bullseye" style="width:16px;text-align:center;"></i>
+        <span>Metas Pós-Venda</span>
+      </button>
+      <button type="button" class="nav-item" data-module="ias" onclick="showModule('ias')" style="width:calc(100% - 24px);">
+        <i class="fa-solid fa-star-half-stroke" style="width:16px;text-align:center;"></i>
+        <span>Simulador IAS</span>
+      </button>
+
+      <div style="padding:16px 20px 4px;color:#3d4f7a;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.14em;margin-top:8px;">Sistema</div>
+
+      <button type="button" class="nav-item" data-module="usuarios" onclick="showModule('usuarios')" style="width:calc(100% - 24px);">
+        <i class="fa-solid fa-users" style="width:16px;text-align:center;"></i>
+        <span>Usuários</span>
+      </button>
+      <button type="button" class="nav-item" data-module="configuracoes" onclick="showModule('configuracoes')" style="width:calc(100% - 24px);">
+        <i class="fa-solid fa-gear" style="width:16px;text-align:center;"></i>
+        <span>Configurações</span>
+      </button>
+    </nav>
+
+    <!-- User row -->
+    <div style="border-top:1px solid rgba(255,255,255,0.06);padding:14px 16px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:34px;height:34px;border-radius:50%;background:var(--color-primary);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:13px;flex-shrink:0;">G</div>
+        <div style="flex:1;min-width:0;">
+          <div style="color:white;font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Gerente Pós-Venda</div>
+          <div style="color:#5a6a9a;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">gerente@demo.horus.com.br</div>
+        </div>
+        <button type="button" onclick="doLogout()" style="background:none;border:none;color:#5a6a9a;cursor:pointer;font-size:14px;transition:color 0.15s;flex-shrink:0;" aria-label="Sair do sistema" onmouseover="this.style.color='#ef4444'" onmouseout="this.style.color='#5a6a9a'">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main wrapper -->
+  <div id="main-content" style="margin-left:256px;display:flex;flex-direction:column;min-height:100vh;">
+
+    <!-- App header -->
+    <header class="app-header">
+      <button type="button" id="hamburgerBtn" onclick="openSidebar()" style="display:none;background:none;border:none;color:var(--color-text-muted);cursor:pointer;font-size:20px;margin-right:12px;" aria-label="Abrir menu">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <div style="flex:1;">
+        <span id="headerTitle" style="font-weight:600;color:var(--color-slate-900);font-size:var(--font-size-base);">Dashboard Gerencial</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="display:flex;align-items:center;gap:6px;background:var(--color-slate-50);border:1px solid var(--color-border);border-radius:var(--border-radius);padding:6px 12px;font-size:12px;color:var(--color-text-muted);">
+          <i class="fa-regular fa-calendar" style="color:var(--color-text-light);"></i>
+          Jun / 2026
+        </div>
+        <!-- Bell notifications -->
+        <div style="position:relative;">
+          <button type="button" id="bellBtn" onclick="toggleNotifDropdown(event)" style="width:34px;height:34px;background:var(--color-slate-50);border:1px solid var(--color-border);border-radius:var(--border-radius);display:flex;align-items:center;justify-content:center;color:var(--color-text-muted);cursor:pointer;transition:color 0.15s;position:relative;" aria-label="Notificações">
+            <i class="fa-regular fa-bell" style="font-size:14px;"></i>
+            <span id="notifBadge" style="position:absolute;top:-5px;right:-5px;width:17px;height:17px;background:var(--color-danger);border-radius:50%;font-size:9px;font-weight:700;color:white;display:flex;align-items:center;justify-content:center;border:2px solid white;">3</span>
+          </button>
+          <div id="notifDropdown" class="dropdown-panel hidden" style="min-width:310px;">
+            <div style="padding:14px 16px;border-bottom:1px solid var(--color-border);display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-weight:700;font-size:14px;color:var(--color-slate-900);">Notificações</span>
+              <button onclick="marcarTodasLidas()" style="background:none;border:none;font-size:11px;color:var(--color-primary);cursor:pointer;font-family:var(--font-family-base);font-weight:600;">Marcar todas como lidas</button>
+            </div>
+            <div>
+              <div style="padding:12px 16px;border-bottom:1px solid var(--color-slate-50);">
+                <div style="display:flex;align-items:flex-start;gap:10px;">
+                  <div style="width:8px;height:8px;border-radius:50%;background:var(--color-danger);flex-shrink:0;margin-top:5px;"></div>
+                  <div><div style="font-size:12px;font-weight:600;color:var(--color-slate-900);">NPS abaixo da meta — C&O</div><div style="font-size:11px;color:var(--color-text-muted);margin-top:2px;">NPS atingiu 72 pts · Meta é 75 pts</div><div style="font-size:10px;color:var(--color-text-light);margin-top:4px;">Há 2 horas</div></div>
+                </div>
+              </div>
+              <div style="padding:12px 16px;border-bottom:1px solid var(--color-slate-50);">
+                <div style="display:flex;align-items:flex-start;gap:10px;">
+                  <div style="width:8px;height:8px;border-radius:50%;background:var(--color-warning);flex-shrink:0;margin-top:5px;"></div>
+                  <div><div style="font-size:12px;font-weight:600;color:var(--color-slate-900);">Peças abaixo da meta — 90,6%</div><div style="font-size:11px;color:var(--color-text-muted);margin-top:2px;">Meta de peças genuínas em atenção</div><div style="font-size:10px;color:var(--color-text-light);margin-top:4px;">Há 5 horas</div></div>
+                </div>
+              </div>
+              <div style="padding:12px 16px;">
+                <div style="display:flex;align-items:flex-start;gap:10px;">
+                  <div style="width:8px;height:8px;border-radius:50%;background:var(--color-success);flex-shrink:0;margin-top:5px;"></div>
+                  <div><div style="font-size:12px;font-weight:600;color:var(--color-slate-900);">Bonificação MTS confirmada</div><div style="font-size:11px;color:var(--color-text-muted);margin-top:2px;">R$ 13.250 aprovado pela fábrica</div><div style="font-size:10px;color:var(--color-text-light);margin-top:4px;">Ontem 16:30</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- User avatar + dropdown -->
+        <div style="position:relative;">
+          <div id="avatarBtn" onclick="toggleUserDropdown(event)" style="width:34px;height:34px;background:var(--color-primary);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:13px;cursor:pointer;" title="Perfil" role="button" aria-label="Menu do usuário">G</div>
+          <div id="userDropdown" class="dropdown-panel hidden" style="min-width:210px;">
+            <div style="padding:14px 16px;border-bottom:1px solid var(--color-border);">
+              <div style="font-weight:600;font-size:13px;color:var(--color-slate-900);">Gerente Pós-Venda</div>
+              <div style="font-size:11px;color:var(--color-text-muted);margin-top:2px;">gerente@demo.horus.com.br</div>
+            </div>
+            <div style="padding:4px 0;">
+              <button class="dropdown-item" onclick="closeAllDropdowns();openProfileModal()"><i class="fa-solid fa-user" style="color:var(--color-text-light);width:16px;text-align:center;"></i> Meu Perfil</button>
+              <button class="dropdown-item" onclick="closeAllDropdowns();openPasswordModal()"><i class="fa-solid fa-lock" style="color:var(--color-text-light);width:16px;text-align:center;"></i> Alterar Senha</button>
+              <div style="height:1px;background:var(--color-border);margin:4px 0;"></div>
+              <button class="dropdown-item" onclick="doLogout()" style="color:var(--color-danger);"><i class="fa-solid fa-arrow-right-from-bracket" style="width:16px;text-align:center;"></i> Sair</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page content -->
+    <main style="flex:1;padding:20px 24px;overflow:auto;">
+
+      <!-- ══════════════════════════════
+           MÓDULO 1: DASHBOARD GERENCIAL
+      ══════════════════════════════ -->
+      <section id="mod-dashboard" class="module fade-in" aria-label="Dashboard Gerencial">
+
+        <div style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:20px;">
+          <div>
+            <h2 style="font-size:1.2rem;font-weight:700;color:var(--color-slate-900);margin:0 0 4px;">Dashboard Gerencial</h2>
+            <p style="font-size:12px;color:var(--color-text-muted);margin:0;">Indicadores consolidados · Concessionária Alpha</p>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <select id="periodSelect" onchange="onPeriodChange(this)" style="font-family:var(--font-family-base);font-size:12px;border:1px solid var(--color-border);border-radius:var(--border-radius);padding:7px 12px;background:white;color:var(--color-text-base);outline:none;">
+              <option>Jun / 2026</option><option>Mai / 2026</option><option>Abr / 2026</option>
+            </select>
+            <button type="button" class="btn btn-outline" onclick="showFilterModal()" style="font-size:12px;padding:7px 12px;">
+              <i class="fa-solid fa-filter" style="font-size:10px;"></i> Filtros
+            </button>
+            <button type="button" id="exportBtn" class="btn btn-primary" onclick="doExportar()" style="font-size:12px;padding:7px 12px;">
+              <i class="fa-solid fa-arrow-down" style="font-size:10px;"></i> Exportar
+            </button>
+          </div>
+        </div>
+
+        <!-- Canal tabs -->
+        <div style="display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap;">
+          <button type="button" class="tab-btn active" onclick="switchCanalTab(this,'co')">Caminhões &amp; Ônibus</button>
+          <button type="button" class="tab-btn" onclick="switchCanalTab(this,'vans')">Vans</button>
+          <button type="button" class="tab-btn" onclick="switchCanalTab(this,'total')">Consolidado</button>
+        </div>
+
+        <!-- KPI cards -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-bottom:18px;">
+          <div class="kpi-card">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;">
+              <div class="kpi-icon" style="background:#fff3eb;"><i class="fa-solid fa-dollar-sign" style="color:var(--color-primary);"></i></div>
+              <span class="badge badge-green">+8,4%</span>
+            </div>
+            <div class="kpi-label">Faturamento PSC</div>
+            <div class="kpi-value" id="kpiPSC">R$ 2,84M</div>
+            <div class="kpi-delta up" id="kpiPSCDelta"><i class="fa-solid fa-arrow-trend-up" style="margin-right:4px;"></i>+R$ 221k vs mai</div>
+          </div>
+          <div class="kpi-card">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;">
+              <div class="kpi-icon" style="background:#ecfdf5;"><i class="fa-solid fa-face-smile" style="color:var(--color-success);"></i></div>
+              <span class="badge badge-yellow">Meta: 75</span>
+            </div>
+            <div class="kpi-label" id="kpiNPSLabel">NPS C&amp;O</div>
+            <div class="kpi-value" id="kpiNPS">72 pts</div>
+            <div class="kpi-delta down" id="kpiNPSDelta"><i class="fa-solid fa-arrow-trend-down" style="margin-right:4px;"></i>-3 pts vs mai</div>
+          </div>
+          <div class="kpi-card">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;">
+              <div class="kpi-icon" style="background:#eef2ff;"><i class="fa-solid fa-star" style="color:#7c3aed;"></i></div>
+              <span class="badge badge-green">Meta: 65%</span>
+            </div>
+            <div class="kpi-label" id="kpiCXILabel">CXI — C&amp;O</div>
+            <div class="kpi-value" id="kpiCXI">68,4%</div>
+            <div class="kpi-delta up" id="kpiCXIDelta"><i class="fa-solid fa-arrow-trend-up" style="margin-right:4px;"></i>+2,1pp vs mai</div>
+          </div>
+          <div class="kpi-card">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;">
+              <div class="kpi-icon" style="background:#e0f2fe;"><i class="fa-solid fa-wrench" style="color:var(--color-secondary);"></i></div>
+              <span class="badge badge-teal">Atingido</span>
+            </div>
+            <div class="kpi-label">MTS</div>
+            <div class="kpi-value" id="kpiMTS">85,0%</div>
+            <div class="kpi-delta up" id="kpiMTSDelta"><i class="fa-solid fa-arrow-trend-up" style="margin-right:4px;"></i>+1,2pp vs mai</div>
+          </div>
+        </div>
+
+        <!-- Charts row -->
+        <div style="display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:18px;">
+          <div class="chart-card">
+            <div class="chart-title">Faturamento Mensal — Pós-Venda</div>
+            <div class="chart-sub">Peças e serviços · Jan–Jun 2026 · em R$ mil</div>
+            <canvas id="chartFat" height="200"></canvas>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Composição por Canal</div>
+            <div class="chart-sub">Participação no faturamento total</div>
+            <div style="display:flex;justify-content:center;"><canvas id="chartCanal" height="180" width="180"></canvas></div>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;">
+                <span style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:50%;background:var(--color-primary);display:inline-block;"></span>Caminhões &amp; Ônibus</span>
+                <span style="font-weight:600;">64,3%</span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;">
+                <span style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:50%;background:var(--color-secondary);display:inline-block;"></span>Vans</span>
+                <span style="font-weight:600;">35,7%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- KPI Table -->
+        <div class="chart-card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+            <div>
+              <div class="chart-title">Indicadores de Desempenho — C&amp;O</div>
+              <div class="chart-sub" style="margin-bottom:0;">Mês atual vs meta fábrica</div>
+            </div>
+            <span class="badge badge-yellow">4 alertas</span>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="data-table">
+              <thead><tr><th>Indicador</th><th>Realizado</th><th>Meta</th><th>Atingimento</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td style="font-weight:500;">CPR — Captura de Retornos</td><td>78,4%</td><td>80,0%</td>
+                  <td><div style="display:flex;align-items:center;gap:8px;"><div class="progress-bar" style="flex:1;min-width:70px;"><div class="progress-fill" style="width:98%;background:var(--color-warning);"></div></div><span style="font-size:11px;font-weight:600;">98%</span></div></td>
+                  <td><span class="badge badge-yellow">Atenção</span></td>
+                </tr>
+                <tr>
+                  <td style="font-weight:500;">VDAS — Venda de Acessórios</td><td>R$ 48.320</td><td>R$ 45.000</td>
+                  <td><div style="display:flex;align-items:center;gap:8px;"><div class="progress-bar" style="flex:1;min-width:70px;"><div class="progress-fill" style="width:100%;background:var(--color-success);"></div></div><span style="font-size:11px;font-weight:600;">107%</span></div></td>
+                  <td><span class="badge badge-green">Atingido</span></td>
+                </tr>
+                <tr>
+                  <td style="font-weight:500;">PSP — Plano de Serviços</td><td>124 contratos</td><td>140 contratos</td>
+                  <td><div style="display:flex;align-items:center;gap:8px;"><div class="progress-bar" style="flex:1;min-width:70px;"><div class="progress-fill" style="width:89%;background:var(--color-danger);"></div></div><span style="font-size:11px;font-weight:600;">89%</span></div></td>
+                  <td><span class="badge badge-red">Abaixo</span></td>
+                </tr>
+                <tr>
+                  <td style="font-weight:500;">APR — Aproveitamento</td><td>91,2%</td><td>90,0%</td>
+                  <td><div style="display:flex;align-items:center;gap:8px;"><div class="progress-bar" style="flex:1;min-width:70px;"><div class="progress-fill" style="width:100%;background:var(--color-success);"></div></div><span style="font-size:11px;font-weight:600;">101%</span></div></td>
+                  <td><span class="badge badge-green">Atingido</span></td>
+                </tr>
+                <tr>
+                  <td style="font-weight:500;">PROD — Produtividade</td><td>82,7%</td><td>88,0%</td>
+                  <td><div style="display:flex;align-items:center;gap:8px;"><div class="progress-bar" style="flex:1;min-width:70px;"><div class="progress-fill" style="width:94%;background:var(--color-warning);"></div></div><span style="font-size:11px;font-weight:600;">94%</span></div></td>
+                  <td><span class="badge badge-yellow">Atenção</span></td>
+                </tr>
+                <tr>
+                  <td style="font-weight:500;">PSG — Pesquisa de Satisfação</td><td>88,5%</td><td>85,0%</td>
+                  <td><div style="display:flex;align-items:center;gap:8px;"><div class="progress-bar" style="flex:1;min-width:70px;"><div class="progress-fill" style="width:100%;background:var(--color-success);"></div></div><span style="font-size:11px;font-weight:600;">104%</span></div></td>
+                  <td><span class="badge badge-green">Atingido</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ══════════════════════════════
+           MÓDULO 2: DIAGNÓSTICO DA OFICINA
+      ══════════════════════════════ -->
+      <section id="mod-diagnostico" class="module hidden fade-in" aria-label="Diagnóstico da Oficina">
+        <div style="margin-bottom:20px;">
+          <h2 style="font-size:1.2rem;font-weight:700;color:var(--color-slate-900);margin:0 0 4px;">Diagnóstico de Desempenho da Oficina</h2>
+          <p style="font-size:12px;color:var(--color-text-muted);margin:0;">Simulador de faturamento e projeção de crescimento · Concessionária Beta</p>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 2fr;gap:14px;margin-bottom:18px;">
+
+          <!-- Inputs -->
+          <div class="chart-card">
+            <div class="chart-title" style="margin-bottom:4px;">Dados da Operação</div>
+            <div class="chart-sub">Preencha para simular o faturamento</div>
+            <div style="display:flex;flex-direction:column;gap:14px;">
+              <div>
+                <label style="display:block;font-size:10px;font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Capacidade Instalada (HH/mês)</label>
+                <input type="number" value="2640" style="width:100%;border:1.5px solid var(--color-border);border-radius:var(--border-radius);padding:9px 12px;font-family:var(--font-family-base);font-size:13px;outline:none;transition:border-color 0.15s;" onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='var(--color-border)'" />
+              </div>
+              <div>
+                <label style="display:block;font-size:10px;font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Eficiência Atual (%)</label>
+                <input type="number" value="78" style="width:100%;border:1.5px solid var(--color-border);border-radius:var(--border-radius);padding:9px 12px;font-family:var(--font-family-base);font-size:13px;outline:none;transition:border-color 0.15s;" onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='var(--color-border)'" />
+              </div>
+              <div>
+                <label style="display:block;font-size:10px;font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Valor da HH (R$)</label>
+                <input type="number" value="185" style="width:100%;border:1.5px solid var(--color-border);border-radius:var(--border-radius);padding:9px 12px;font-family:var(--font-family-base);font-size:13px;outline:none;transition:border-color 0.15s;" onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='var(--color-border)'" />
+              </div>
+              <div>
+                <label style="display:block;font-size:10px;font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">% Mão de Obra Indireta</label>
+                <input type="number" value="22" style="width:100%;border:1.5px solid var(--color-border);border-radius:var(--border-radius);padding:9px 12px;font-family:var(--font-family-base);font-size:13px;outline:none;transition:border-color 0.15s;" onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='var(--color-border)'" />
+              </div>
+              <div>
+                <label style="display:block;font-size:10px;font-weight:600;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Meta de Eficiência (%)</label>
+                <input type="number" value="88" style="width:100%;border:1.5px solid var(--color-border);border-radius:var(--border-radius);padding:9px 12px;font-family:var(--font-family-base);font-size:13px;outline:none;transition:border-color 0.15s;" onfocus="this.style.borderColor='var(--color-primary)'" onblur="this.style.borderColor='var(--color-border)'" />
+              </div>
+              <button type="button" class="btn btn-primary" onclick="calcularSimulador()" style="width:100%;justify-content:center;padding:11px;">
+                <i class="fa-solid fa-calculator"></i> Simular Faturamento
+              </button>
+            </div>
+          </div>
+
+          <!-- Results -->
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+              <div class="kpi-card" style="text-align:center;">
+                <div class="kpi-label" style="text-align:center;">Fat. Atual</div>
+                <div class="kpi-value" id="simFatAtual" style="text-align:center;">R$ 380,4K</div>
+                <div style="font-size:11px;color:var(--color-text-light);margin-top:4px;">78% eficiência</div>
+              </div>
+              <div style="background:var(--color-primary);border-radius:var(--border-radius-lg);padding:20px;text-align:center;color:white;">
+                <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.7);margin-bottom:8px;">Fat. Projetado</div>
+                <div style="font-size:1.6rem;font-weight:700;" id="simFatProj">R$ 430,1K</div>
+                <div style="font-size:11px;color:rgba(255,255,255,0.6);margin-top:4px;">na meta de 88%</div>
+              </div>
+              <div class="kpi-card" style="text-align:center;">
+                <div class="kpi-label" style="text-align:center;">Ganho Potencial</div>
+                <div class="kpi-value" id="simGanho" style="text-align:center;color:var(--color-success);">+R$ 49,7K</div>
+                <div style="font-size:11px;color:var(--color-text-light);margin-top:4px;">por mês</div>
+              </div>
+            </div>
+            <div class="chart-card" style="flex:1;">
+              <div class="chart-title">Diagnóstico Mensal — Eficiência da Oficina</div>
+              <div class="chart-sub">Real vs Meta · Jan–Jun 2026 (%)</div>
+              <canvas id="chartDiag" height="200"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Projection table -->
+        <div class="chart-card">
+          <div class="chart-title" style="margin-bottom:4px;">Projeção de Crescimento</div>
+          <div class="chart-sub">Cenários de ganho com aumento progressivo de eficiência</div>
+          <div style="overflow-x:auto;">
+            <table class="data-table">
+              <thead><tr><th>Cenário</th><th>Eficiência</th><th>HH Faturadas/mês</th><th>Fat. MO</th><th>Fat. MO Ind.</th><th>Total Projetado</th><th>Ganho vs Atual</th></tr></thead>
+              <tbody>
+                <tr style="background:var(--color-slate-50);">
+                  <td style="font-weight:500;color:var(--color-text-muted);">Atual</td><td>78%</td><td>2.059</td><td>R$ 380.915</td><td>R$ 83.801</td><td style="font-weight:600;">R$ 464.716</td><td style="color:var(--color-text-light);">—</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:500;">Cenário +3%</td><td>81%</td><td>2.138</td><td>R$ 395.573</td><td>R$ 87.026</td><td style="font-weight:600;color:var(--color-warning);">R$ 482.599</td><td style="font-weight:600;color:var(--color-success);">+R$ 17.883</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:500;">Meta Fábrica</td><td>88%</td><td>2.323</td><td>R$ 429.768</td><td>R$ 94.549</td><td style="font-weight:600;color:var(--color-secondary);">R$ 524.317</td><td style="font-weight:600;color:var(--color-success);">+R$ 59.601</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:500;">StarClass 95%</td><td>95%</td><td>2.508</td><td>R$ 463.980</td><td>R$ 102.076</td><td style="font-weight:600;color:var(--color-success);">R$ 566.056</td><td style="font-weight:600;color:var(--color-success);">+R$ 101.340</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ══════════════════════════════
+           MÓDULO 3: METAS PÓS-VENDA
+      ══════════════════════════════ -->
+      <section id="mod-metas" class="module hidden fade-in" aria-label="Metas Pós-Venda">
+        <div style="margin-bottom:20px;">
+          <h2 style="font-size:1.2rem;font-weight:700;color:var(--color-slate-900);margin:0 0 4px;">Gerencial de Metas — Pós-Venda</h2>
+          <p style="font-size:12px;color:var(--color-text-muted);margin:0;">Acompanhamento de metas, bonificações e DRE · Jun 2026</p>
+        </div>
+
+        <div style="display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap;">
+          <button type="button" class="tab-btn active" onclick="switchTab(this,'tab-oficina')">Oficina</button>
+          <button type="button" class="tab-btn" onclick="switchTab(this,'tab-pecas')">Peças</button>
+          <button type="button" class="tab-btn" onclick="switchTab(this,'tab-bonus')">Bonificações</button>
+          <button type="button" class="tab-btn" onclick="switchTab(this,'tab-dre')">Simulador DRE</button>
+        </div>
+
+        <!-- Oficina -->
+        <div id="tab-oficina" class="tab-panel active" style="display:flex;flex-direction:column;gap:14px;">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;">
+            <div class="kpi-card">
+              <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;">
+                <div class="kpi-icon" style="background:#eff6ff;"><i class="fa-solid fa-clipboard-list" style="color:var(--color-secondary);"></i></div>
+                <span class="badge badge-yellow">89,8%</span>
+              </div>
+              <div class="kpi-label">Ordens de Serviço</div>
+              <div class="kpi-value">1.347</div>
+              <div style="font-size:11px;color:var(--color-text-light);margin-top:4px;">Meta: 1.500 OS/mês</div>
+            </div>
+            <div class="kpi-card">
+              <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;">
+                <div class="kpi-icon" style="background:#f0fdf4;"><i class="fa-solid fa-ticket" style="color:var(--color-success);"></i></div>
+                <span class="badge badge-green">104,2%</span>
+              </div>
+              <div class="kpi-label">Ticket Médio Oficina</div>
+              <div class="kpi-value">R$ 2.820</div>
+              <div style="font-size:11px;color:var(--color-text-light);margin-top:4px;">Meta: R$ 2.707</div>
+            </div>
+            <div class="kpi-card">
+              <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;">
+                <div class="kpi-icon" style="background:#fff3eb;"><i class="fa-solid fa-clock" style="color:var(--color-primary);"></i></div>
+                <span class="badge badge-yellow">94,3%</span>
+              </div>
+              <div class="kpi-label">HH Faturadas</div>
+              <div class="kpi-value">2.059</div>
+              <div style="font-size:11px;color:var(--color-text-light);margin-top:4px;">Meta: 2.184 HH/mês</div>
+            </div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">Faturamento Oficina — Metas vs Realizado</div>
+            <div class="chart-sub">Jan–Jun 2026 · em R$ mil</div>
+            <canvas id="chartOficina" height="200"></canvas>
+          </div>
+        </div>
+
+        <!-- Peças -->
+        <div id="tab-pecas" class="tab-panel">
+          <div class="chart-card">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+              <div>
+                <div class="chart-title">Acordo de Metas — Peças C&amp;O 2026</div>
+                <div class="chart-sub" style="margin-bottom:0;">Realizado vs meta fábrica por família</div>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size:1.5rem;font-weight:700;color:var(--color-slate-900);">90,6%</div>
+                <div style="font-size:11px;color:var(--color-text-light);">atingimento geral</div>
+              </div>
+            </div>
+            <div style="overflow-x:auto;">
+              <table class="data-table">
+                <thead><tr><th>Família</th><th>Meta Fábrica</th><th>Realizado</th><th>Atingimento</th><th>Tendência</th></tr></thead>
+                <tbody>
+                  <tr><td style="font-weight:500;">Peças Genuínas</td><td>R$ 780.000</td><td>R$ 712.400</td><td><div style="display:flex;align-items:center;gap:8px;"><div class="progress-bar" style="width:90px;"><div class="progress-fill" style="width:91%;background:var(--color-warning);"></div></div><span style="font-size:11px;font-weight:600;">91,3%</span></div></td><td><i class="fa-solid fa-arrow-trend-up" style="color:var(--color-warning);"></i></td></tr>
+                  <tr><td style="font-weight:500;">Peças Reman.</td><td>R$ 220.000</td><td>R$ 198.600</td><td><div style="display:flex;align-items:center;gap:8px;"><div class="progress-bar" style="width:90px;"><div class="progress-fill" style="width:90%;background:var(--color-warning);"></div></div><span style="font-size:11px;font-weight:600;">90,3%</span></div></td><td><i class="fa-solid fa-arrow-trend-down" style="color:var(--color-danger);"></i></td></tr>
+                  <tr><td style="font-weight:500;">Acessórios</td><td>R$ 95.000</td><td>R$ 103.200</td><td><div style="display:flex;align-items:center;gap:8px;"><div class="progress-bar" style="width:90px;"><div class="progress-fill" style="width:100%;background:var(--color-success);"></div></div><span style="font-size:11px;font-weight:600;">108,6%</span></div></td><td><i class="fa-solid fa-arrow-trend-up" style="color:var(--color-success);"></i></td></tr>
+                  <tr><td style="font-weight:500;">Fluidos &amp; Químicos</td><td>R$ 48.000</td><td>R$ 42.100</td><td><div style="display:flex;align-items:center;gap:8px;"><div class="progress-bar" style="width:90px;"><div class="progress-fill" style="width:88%;background:var(--color-danger);"></div></div><span style="font-size:11px;font-weight:600;">87,7%</span></div></td><td><i class="fa-solid fa-arrow-trend-down" style="color:var(--color-danger);"></i></td></tr>
+                  <tr><td style="font-weight:500;">Pneus</td><td>R$ 57.000</td><td>R$ 30.700</td><td><div style="display:flex;align-items:center;gap:8px;"><div class="progress-bar" style="width:90px;"><div class="progress-fill" style="width:54%;background:var(--color-danger);"></div></div><span style="font-size:11px;font-weight:600;">53,9%</span></div></td><td><i class="fa-solid fa-circle-exclamation" style="color:var(--color-danger);"></i></td></tr>
+                  <tr style="background:#fff3eb50;font-weight:700;"><td>TOTAL</td><td>R$ 1.200.000</td><td>R$ 1.087.000</td><td><div style="display:flex;align-items:center;gap:8px;"><div class="progress-bar" style="width:90px;"><div class="progress-fill" style="width:90%;background:var(--color-primary);"></div></div><span style="font-size:11px;font-weight:700;color:var(--color-primary);">90,6%</span></div></td><td><span class="badge badge-yellow">Atenção</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bonificações -->
+        <div id="tab-bonus" class="tab-panel" style="display:none;">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:14px;">
+            <div class="kpi-card"><div class="kpi-label">Bonificação Estimada</div><div class="kpi-value" style="color:var(--color-success);">R$ 48.500</div><div style="font-size:11px;color:var(--color-text-light);margin-top:4px;">C&amp;O — Jun 2026</div></div>
+            <div class="kpi-card"><div class="kpi-label">Bonificação Acumulada</div><div class="kpi-value">R$ 243.800</div><div style="font-size:11px;color:var(--color-text-light);margin-top:4px;">Jan–Jun 2026</div></div>
+            <div class="kpi-card"><div class="kpi-label">Projeção Anual</div><div class="kpi-value" style="color:var(--color-secondary);">R$ 487.600</div><div style="font-size:11px;color:var(--color-text-light);margin-top:4px;">Baseado no semestre</div></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title" style="margin-bottom:4px;">Detalhamento de Bonificações — C&amp;O 2026</div>
+            <div class="chart-sub">Regras de bonificação por indicador</div>
+            <div style="overflow-x:auto;">
+              <table class="data-table">
+                <thead><tr><th>Indicador</th><th>Regra</th><th>Atingimento</th><th>Valor Bônus</th><th>Status</th></tr></thead>
+                <tbody>
+                  <tr><td style="font-weight:500;">NPS C&amp;O ≥ 75 pts</td><td>R$ 15.000</td><td>72 pts</td><td style="color:var(--color-text-light);">R$ 0</td><td><span class="badge badge-red">Não atingido</span></td></tr>
+                  <tr><td style="font-weight:500;">CXI ≥ 65%</td><td>R$ 10.000</td><td>68,4%</td><td style="font-weight:600;color:var(--color-success);">R$ 10.000</td><td><span class="badge badge-green">Atingido</span></td></tr>
+                  <tr><td style="font-weight:500;">Peças ≥ 95%</td><td>R$ 18.500</td><td>90,6%</td><td style="color:var(--color-text-light);">R$ 0</td><td><span class="badge badge-red">Não atingido</span></td></tr>
+                  <tr><td style="font-weight:500;">Produtividade ≥ 80%</td><td>R$ 12.000</td><td>82,7%</td><td style="font-weight:600;color:var(--color-success);">R$ 12.000</td><td><span class="badge badge-green">Atingido</span></td></tr>
+                  <tr><td style="font-weight:500;">StarClass Completa</td><td>R$ 26.500</td><td>Parcial</td><td style="font-weight:600;color:var(--color-warning);">R$ 13.250</td><td><span class="badge badge-yellow">Parcial 50%</span></td></tr>
+                  <tr><td style="font-weight:500;">MTS ≥ 85%</td><td>R$ 13.250</td><td>85,0%</td><td style="font-weight:600;color:var(--color-success);">R$ 13.250</td><td><span class="badge badge-green">Atingido</span></td></tr>
+                  <tr style="background:#f0fdf450;font-weight:700;"><td>TOTAL</td><td>R$ 95.250</td><td>—</td><td style="color:var(--color-success);font-weight:700;">R$ 48.500</td><td><span class="badge badge-yellow">50,9%</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- DRE -->
+        <div id="tab-dre" class="tab-panel" style="display:none;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+            <div class="chart-card">
+              <div class="chart-title" style="margin-bottom:4px;">Simulador DRE — Pós-Venda</div>
+              <div class="chart-sub">Demonstrativo de resultado projetado · Jun 2026</div>
+              <table class="data-table">
+                <thead><tr><th>Conta</th><th>Realizado</th><th>Orçado</th><th>Var.</th></tr></thead>
+                <tbody>
+                  <tr style="font-weight:600;background:#eff6ff50;"><td>Receita Bruta Total</td><td>R$ 3.847K</td><td>R$ 4.100K</td><td style="color:var(--color-danger);">-6,2%</td></tr>
+                  <tr style="color:var(--color-text-muted);"><td style="padding-left:24px;">(-) Impostos e Deduções</td><td>R$ 578K</td><td>R$ 615K</td><td style="color:var(--color-success);">-6,0%</td></tr>
+                  <tr style="font-weight:600;background:#eff6ff50;"><td>Receita Líquida</td><td>R$ 3.269K</td><td>R$ 3.485K</td><td style="color:var(--color-danger);">-6,2%</td></tr>
+                  <tr style="color:var(--color-text-muted);"><td style="padding-left:24px;">(-) CMV Peças</td><td>R$ 765K</td><td>R$ 820K</td><td style="color:var(--color-success);">-6,7%</td></tr>
+                  <tr style="color:var(--color-text-muted);"><td style="padding-left:24px;">(-) Custo Mão de Obra</td><td>R$ 420K</td><td>R$ 445K</td><td style="color:var(--color-success);">-5,6%</td></tr>
+                  <tr style="font-weight:600;background:#eff6ff50;"><td>Lucro Bruto</td><td>R$ 2.084K</td><td>R$ 2.220K</td><td style="color:var(--color-danger);">-6,1%</td></tr>
+                  <tr style="color:var(--color-text-muted);"><td style="padding-left:24px;">(-) Despesas Operacionais</td><td>R$ 1.340K</td><td>R$ 1.420K</td><td style="color:var(--color-success);">-5,6%</td></tr>
+                  <tr style="font-weight:600;background:#f0fdf450;"><td>EBITDA</td><td>R$ 744K</td><td>R$ 800K</td><td style="color:var(--color-danger);">-7,0%</td></tr>
+                  <tr style="font-weight:700;"><td>Margem EBITDA</td><td>19,4%</td><td>19,5%</td><td style="color:var(--color-text-light);">-0,1pp</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="chart-card">
+              <div class="chart-title">Composição do Resultado</div>
+              <div class="chart-sub">Receita vs Custos vs Resultado · Jun 2026</div>
+              <canvas id="chartDRE" height="300"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ══════════════════════════════
+           MÓDULO 4: SIMULADOR IAS
+      ══════════════════════════════ -->
+      <section id="mod-ias" class="module hidden fade-in" aria-label="Simulador IAS">
+        <div style="margin-bottom:20px;">
+          <h2 style="font-size:1.2rem;font-weight:700;color:var(--color-slate-900);margin:0 0 4px;">Simulador IAS — Índice de Aprovação e Satisfação</h2>
+          <p style="font-size:12px;color:var(--color-text-muted);margin:0;">Leitura 2026 · Acompanhamento de metas e despesas · Concessionária Alpha</p>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px;">
+
+          <!-- IAS Score -->
+          <div class="chart-card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 20px;">
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--color-text-light);margin-bottom:16px;">Score IAS Atual</div>
+            <div class="score-ring" style="margin-bottom:16px;">
+              <svg width="160" height="160" viewBox="0 0 160 160" aria-hidden="true">
+                <circle cx="80" cy="80" r="70" fill="none" stroke="#e2e8f0" stroke-width="12"/>
+                <circle cx="80" cy="80" r="70" fill="none" stroke="var(--color-primary)" stroke-width="12"
+                  stroke-dasharray="439.82" stroke-dashoffset="56.3" stroke-linecap="round"/>
+              </svg>
+              <div class="score-text">
+                <div style="font-size:2.4rem;font-weight:800;color:var(--color-slate-900);">87,3</div>
+                <div style="font-size:11px;color:var(--color-text-light);font-weight:500;">/ 100</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:16px;font-size:13px;">
+              <div style="text-align:center;"><div style="font-weight:700;color:var(--color-slate-900);">90,0</div><div style="font-size:10px;color:var(--color-text-light);">Meta</div></div>
+              <div style="width:1px;height:28px;background:var(--color-border);"></div>
+              <div style="text-align:center;"><div style="font-weight:700;color:var(--color-danger);">-2,7</div><div style="font-size:10px;color:var(--color-text-light);">Gap</div></div>
+              <div style="width:1px;height:28px;background:var(--color-border);"></div>
+              <div style="text-align:center;"><div style="font-weight:700;color:var(--color-slate-900);">96,6%</div><div style="font-size:10px;color:var(--color-text-light);">Atingimento</div></div>
+            </div>
+            <div style="margin-top:14px;padding:8px 14px;background:#fff3eb;border:1px solid #fed7aa;border-radius:var(--border-radius);font-size:11px;font-weight:600;color:var(--color-primary);width:100%;text-align:center;">
+              <i class="fa-solid fa-triangle-exclamation" style="margin-right:4px;"></i>Abaixo da meta — ação requerida
+            </div>
+          </div>
+
+          <!-- Goals -->
+          <div class="chart-card">
+            <div class="chart-title" style="margin-bottom:16px;">Componentes do IAS</div>
+            <div style="display:flex;flex-direction:column;gap:16px;">
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;"><span style="font-weight:500;">Satisfação C&amp;O</span><span style="font-weight:600;">88,4 / 90,0</span></div>
+                <div class="progress-bar"><div class="progress-fill" style="width:98.2%;background:var(--color-warning);"></div></div>
+                <div style="font-size:10px;color:var(--color-text-light);margin-top:3px;">98,2% da meta</div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;"><span style="font-weight:500;">Satisfação Vans</span><span style="font-weight:600;">82,1 / 90,0</span></div>
+                <div class="progress-bar"><div class="progress-fill" style="width:91.2%;background:var(--color-danger);"></div></div>
+                <div style="font-size:10px;color:var(--color-danger);margin-top:3px;font-weight:600;">91,2% — crítico</div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;"><span style="font-weight:500;">Retorno de Contato</span><span style="font-weight:600;">91,7 / 90,0</span></div>
+                <div class="progress-bar"><div class="progress-fill" style="width:100%;background:var(--color-success);"></div></div>
+                <div style="font-size:10px;color:var(--color-success);margin-top:3px;font-weight:600;">Atingido ✓</div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;"><span style="font-weight:500;">Primeira Entrega OK</span><span style="font-weight:600;">86,4 / 88,0</span></div>
+                <div class="progress-bar"><div class="progress-fill" style="width:98.2%;background:var(--color-warning);"></div></div>
+                <div style="font-size:10px;color:var(--color-text-light);margin-top:3px;">98,2% da meta</div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;"><span style="font-weight:500;">Tempo Médio de Reparo</span><span style="font-weight:600;">4,8h / 5,0h</span></div>
+                <div class="progress-bar"><div class="progress-fill" style="width:100%;background:var(--color-success);"></div></div>
+                <div style="font-size:10px;color:var(--color-success);margin-top:3px;font-weight:600;">Dentro do prazo ✓</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- IAS chart -->
+          <div class="chart-card">
+            <div class="chart-title">Evolução IAS — 2026</div>
+            <div class="chart-sub">Leitura acumulada vs meta</div>
+            <canvas id="chartIAS" height="280"></canvas>
+          </div>
+        </div>
+
+        <!-- Expenses + action plan -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+          <div class="chart-card">
+            <div class="chart-title" style="margin-bottom:4px;">Acompanhamento de Despesas PV — 2026</div>
+            <div class="chart-sub">Realizado vs orçado por categoria</div>
+            <table class="data-table">
+              <thead><tr><th>Categoria</th><th>Orçado</th><th>Realizado</th><th>%</th></tr></thead>
+              <tbody>
+                <tr><td style="font-weight:500;">Pessoal &amp; Benefícios</td><td>R$ 480K</td><td>R$ 463K</td><td><span class="badge badge-green">96,5%</span></td></tr>
+                <tr><td style="font-weight:500;">Ferramentas &amp; Equipamentos</td><td>R$ 85K</td><td>R$ 97K</td><td><span class="badge badge-red">114,1%</span></td></tr>
+                <tr><td style="font-weight:500;">Treinamento &amp; Capacitação</td><td>R$ 42K</td><td>R$ 38K</td><td><span class="badge badge-green">90,5%</span></td></tr>
+                <tr><td style="font-weight:500;">Marketing Local</td><td>R$ 28K</td><td>R$ 31K</td><td><span class="badge badge-yellow">110,7%</span></td></tr>
+                <tr><td style="font-weight:500;">Infraestrutura &amp; TI</td><td>R$ 36K</td><td>R$ 34K</td><td><span class="badge badge-green">94,4%</span></td></tr>
+                <tr style="font-weight:700;background:var(--color-slate-50);"><td>TOTAL</td><td>R$ 671K</td><td>R$ 663K</td><td><span class="badge badge-green">98,8%</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-title" style="margin-bottom:4px;">Plano de Ação IAS</div>
+            <div class="chart-sub">Ações em andamento para melhoria do score</div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div style="padding:12px;border-radius:var(--border-radius);border:1px solid var(--color-border);background:var(--color-slate-50);">
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px;">
+                  <div style="font-weight:600;font-size:13px;">Treinamento CSI — Equipe Vans</div>
+                  <span class="badge badge-blue" style="flex-shrink:0;">Em andamento</span>
+                </div>
+                <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:8px;">Capacitação em atendimento ao cliente · Resp: Coord. PV</div>
+                <div class="progress-bar"><div class="progress-fill" style="width:60%;background:var(--color-secondary);"></div></div>
+                <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--color-text-light);margin-top:4px;"><span>60% concluído</span><span>Prazo: 30/07/2026</span></div>
+              </div>
+              <div style="padding:12px;border-radius:var(--border-radius);border:1px solid var(--color-border);background:var(--color-slate-50);">
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px;">
+                  <div style="font-weight:600;font-size:13px;">Processo de Retorno Ativo</div>
+                  <span class="badge badge-green" style="flex-shrink:0;">Concluído</span>
+                </div>
+                <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:8px;">Script de retorno e pesquisa pós-OS · Resp: Recepção</div>
+                <div class="progress-bar"><div class="progress-fill" style="width:100%;background:var(--color-success);"></div></div>
+                <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--color-text-light);margin-top:4px;"><span>100% concluído</span><span>Concluído: 15/05/2026</span></div>
+              </div>
+              <div style="padding:12px;border-radius:var(--border-radius);border:1px solid var(--color-border);background:var(--color-slate-50);">
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px;">
+                  <div style="font-weight:600;font-size:13px;">Revisão de Processo PDR — C&amp;O</div>
+                  <span class="badge badge-yellow" style="flex-shrink:0;">Planejado</span>
+                </div>
+                <div style="font-size:11px;color:var(--color-text-muted);margin-bottom:8px;">Mapeamento de primeira entrega certa · Resp: Gerente PV</div>
+                <div class="progress-bar"><div class="progress-fill" style="width:15%;background:var(--color-warning);"></div></div>
+                <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--color-text-light);margin-top:4px;"><span>15% concluído</span><span>Prazo: 31/08/2026</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════
+           MÓDULO 5: USUÁRIOS
+      ══════════════════════════════ -->
+      <section id="mod-usuarios" class="module hidden fade-in" aria-label="Usuários do Sistema">
+        <div style="display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:20px;">
+          <div>
+            <h2 style="font-size:1.2rem;font-weight:700;color:var(--color-slate-900);margin:0 0 4px;">Usuários do Sistema</h2>
+            <p style="font-size:12px;color:var(--color-text-muted);margin:0;">Gerencie o acesso e permissões dos colaboradores</p>
+          </div>
+          <button type="button" class="btn btn-primary" onclick="openInviteModal()">
+            <i class="fa-solid fa-user-plus"></i> Convidar Usuário
+          </button>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:18px;">
+          <div class="kpi-card"><div class="kpi-label">Usuários Ativos</div><div class="kpi-value">12</div><div style="font-size:11px;color:var(--color-text-light);margin-top:4px;">4 concessionárias</div></div>
+          <div class="kpi-card"><div class="kpi-label">Convites Pendentes</div><div class="kpi-value" style="color:var(--color-warning);">3</div><div style="font-size:11px;color:var(--color-text-light);margin-top:4px;">Aguardando aceite</div></div>
+          <div class="kpi-card"><div class="kpi-label">Último Acesso</div><div class="kpi-value" style="font-size:1rem;">Hoje</div><div style="font-size:11px;color:var(--color-text-light);margin-top:4px;">01/07/2026 09:42</div></div>
+        </div>
+
+        <div class="chart-card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px;flex-wrap:wrap;">
+            <div class="chart-title" style="margin:0;">Lista de Usuários</div>
+            <input type="text" placeholder="Buscar usuário..." class="form-input" style="max-width:220px;" oninput="filterUsers(this.value)" />
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="data-table" id="usersTable">
+              <thead><tr><th>Usuário</th><th>Concessionária</th><th>Perfil</th><th>Último Acesso</th><th>Status</th><th>Ações</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td><div style="display:flex;align-items:center;gap:10px;"><div style="width:30px;height:30px;border-radius:50%;background:var(--color-primary);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:12px;flex-shrink:0;">G</div><div><div style="font-weight:500;">Gerente Pós-Venda</div><div style="font-size:11px;color:var(--color-text-muted);">gerente@demo.horus.com.br</div></div></div></td>
+                  <td>Alpha</td><td><span class="badge badge-blue">Gerente</span></td><td>Hoje 09:42</td>
+                  <td><span class="badge badge-green">Ativo</span></td>
+                  <td><button class="btn btn-outline" style="padding:4px 10px;font-size:11px;" onclick="showToast('Perfil do usuário aberto','info')"><i class="fa-solid fa-pen"></i></button></td>
+                </tr>
+                <tr>
+                  <td><div style="display:flex;align-items:center;gap:10px;"><div style="width:30px;height:30px;border-radius:50%;background:var(--color-secondary);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:12px;flex-shrink:0;">M</div><div><div style="font-weight:500;">Marcos Oliveira</div><div style="font-size:11px;color:var(--color-text-muted);">marcos@demo.horus.com.br</div></div></div></td>
+                  <td>Beta</td><td><span class="badge badge-teal">Supervisor</span></td><td>Ontem 14:17</td>
+                  <td><span class="badge badge-green">Ativo</span></td>
+                  <td><button class="btn btn-outline" style="padding:4px 10px;font-size:11px;" onclick="showToast('Perfil do usuário aberto','info')"><i class="fa-solid fa-pen"></i></button></td>
+                </tr>
+                <tr>
+                  <td><div style="display:flex;align-items:center;gap:10px;"><div style="width:30px;height:30px;border-radius:50%;background:var(--color-accent);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:12px;flex-shrink:0;">A</div><div><div style="font-weight:500;">Ana Ferreira</div><div style="font-size:11px;color:var(--color-text-muted);">ana@demo.horus.com.br</div></div></div></td>
+                  <td>Gamma</td><td><span class="badge badge-yellow">Consultor</span></td><td>28/06/2026</td>
+                  <td><span class="badge badge-green">Ativo</span></td>
+                  <td><button class="btn btn-outline" style="padding:4px 10px;font-size:11px;" onclick="showToast('Perfil do usuário aberto','info')"><i class="fa-solid fa-pen"></i></button></td>
+                </tr>
+                <tr>
+                  <td><div style="display:flex;align-items:center;gap:10px;"><div style="width:30px;height:30px;border-radius:50%;background:#8b5cf6;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:12px;flex-shrink:0;">R</div><div><div style="font-weight:500;">Rafael Santos</div><div style="font-size:11px;color:var(--color-text-muted);">rafael@demo.horus.com.br</div></div></div></td>
+                  <td>Delta</td><td><span class="badge badge-blue">Analista</span></td><td>25/06/2026</td>
+                  <td><span class="badge badge-yellow">Pendente</span></td>
+                  <td><button class="btn btn-outline" style="padding:4px 10px;font-size:11px;" onclick="showToast('Convite reenviado com sucesso','success')"><i class="fa-solid fa-paper-plane"></i></button></td>
+                </tr>
+                <tr>
+                  <td><div style="display:flex;align-items:center;gap:10px;"><div style="width:30px;height:30px;border-radius:50%;background:var(--color-slate-400);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:12px;flex-shrink:0;">C</div><div><div style="font-weight:500;">Carla Mendes</div><div style="font-size:11px;color:var(--color-text-muted);">carla@demo.horus.com.br</div></div></div></td>
+                  <td>Alpha</td><td><span class="badge badge-blue">Visualizador</span></td><td>10/06/2026</td>
+                  <td><span class="badge badge-red">Inativo</span></td>
+                  <td><button class="btn btn-outline" style="padding:4px 10px;font-size:11px;" onclick="showToast('Usuário reativado com sucesso','success')"><i class="fa-solid fa-rotate-right"></i></button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ══════════════════════════════
+           MÓDULO 6: CONFIGURAÇÕES
+      ══════════════════════════════ -->
+      <section id="mod-configuracoes" class="module hidden fade-in" aria-label="Configurações">
+        <div style="margin-bottom:20px;">
+          <h2 style="font-size:1.2rem;font-weight:700;color:var(--color-slate-900);margin:0 0 4px;">Configurações do Sistema</h2>
+          <p style="font-size:12px;color:var(--color-text-muted);margin:0;">Gerencie as preferências e dados da concessionária</p>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div class="chart-card">
+            <div class="chart-title" style="margin-bottom:4px;">Dados da Concessionária</div>
+            <div class="chart-sub">Informações cadastrais</div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div class="form-group"><label class="form-label">Nome da Concessionária</label><input class="form-input" type="text" value="Concessionária Alpha" /></div>
+              <div class="form-group"><label class="form-label">CNPJ</label><input class="form-input" type="text" value="12.345.678/0001-90" /></div>
+              <div style="display:grid;grid-template-columns:2fr 1fr;gap:10px;">
+                <div class="form-group"><label class="form-label">Cidade</label><input class="form-input" type="text" value="São Paulo" /></div>
+                <div class="form-group"><label class="form-label">UF</label><input class="form-input" type="text" value="SP" /></div>
+              </div>
+              <div class="form-group"><label class="form-label">Canal Operacional</label><select class="form-input form-select"><option selected>Caminhões &amp; Ônibus</option><option>Vans</option><option>Ambos</option></select></div>
+              <div class="form-group"><label class="form-label">E-mail de Contato</label><input class="form-input" type="email" value="gerente@demo.horus.com.br" /></div>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div class="chart-card">
+              <div class="chart-title" style="margin-bottom:4px;">Notificações</div>
+              <div class="chart-sub">Configure alertas e avisos automáticos</div>
+              <div style="display:flex;flex-direction:column;gap:14px;">
+                <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;gap:12px;">
+                  <div><div style="font-size:13px;font-weight:500;">Alertas de KPI abaixo da meta</div><div style="font-size:11px;color:var(--color-text-muted);">Notificar quando indicadores ficarem abaixo</div></div>
+                  <input type="checkbox" style="accent-color:var(--color-primary);width:16px;height:16px;flex-shrink:0;" checked />
+                </label>
+                <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;gap:12px;">
+                  <div><div style="font-size:13px;font-weight:500;">Relatório mensal automático</div><div style="font-size:11px;color:var(--color-text-muted);">Enviar resumo por e-mail no início de cada mês</div></div>
+                  <input type="checkbox" style="accent-color:var(--color-primary);width:16px;height:16px;flex-shrink:0;" checked />
+                </label>
+                <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;gap:12px;">
+                  <div><div style="font-size:13px;font-weight:500;">Novas bonificações disponíveis</div><div style="font-size:11px;color:var(--color-text-muted);">Notificar quando a fábrica liberar bonificações</div></div>
+                  <input type="checkbox" style="accent-color:var(--color-primary);width:16px;height:16px;flex-shrink:0;" />
+                </label>
+                <label style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;gap:12px;">
+                  <div><div style="font-size:13px;font-weight:500;">Lembretes de prazo IAS</div><div style="font-size:11px;color:var(--color-text-muted);">Avisar 15 dias antes do fechamento</div></div>
+                  <input type="checkbox" style="accent-color:var(--color-primary);width:16px;height:16px;flex-shrink:0;" checked />
+                </label>
+              </div>
+            </div>
+
+            <div class="chart-card">
+              <div class="chart-title" style="margin-bottom:4px;">Preferências de Exibição</div>
+              <div class="chart-sub">Personalização do painel</div>
+              <div style="display:flex;flex-direction:column;gap:12px;">
+                <div class="form-group"><label class="form-label">Período padrão</label><select class="form-input form-select"><option selected>Mês atual</option><option>Últimos 3 meses</option><option>Semestre</option></select></div>
+                <div class="form-group"><label class="form-label">Moeda</label><select class="form-input form-select"><option>R$ — Real Brasileiro</option></select></div>
+                <div class="form-group"><label class="form-label">Idioma</label><select class="form-input form-select"><option>Português (BR)</option></select></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;margin-top:16px;">
+          <button class="btn btn-primary" style="padding:12px 28px;" onclick="saveSettings()">
+            <i class="fa-solid fa-floppy-disk"></i> Salvar Configurações
+          </button>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     MODALS
+══════════════════════════════ -->
+
+<!-- Filter Modal -->
+<div id="filterModal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div>
+        <div style="font-size:1rem;font-weight:700;color:var(--color-slate-900);">Filtros Avançados</div>
+        <div style="font-size:11px;color:var(--color-text-muted);margin-top:2px;">Refine os dados exibidos no painel</div>
+      </div>
+      <button class="modal-close" onclick="closeFilterModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group"><label class="form-label">Período Inicial</label><select class="form-input form-select"><option>Jan / 2026</option><option>Fev / 2026</option><option>Mar / 2026</option><option>Abr / 2026</option><option>Mai / 2026</option><option selected>Jun / 2026</option></select></div>
+        <div class="form-group"><label class="form-label">Período Final</label><select class="form-input form-select"><option>Jan / 2026</option><option>Fev / 2026</option><option>Mar / 2026</option><option>Abr / 2026</option><option>Mai / 2026</option><option selected>Jun / 2026</option></select></div>
+      </div>
+      <div class="form-group"><label class="form-label">Canal</label><select class="form-input form-select"><option>Todos os canais</option><option>Caminhões &amp; Ônibus</option><option>Vans</option></select></div>
+      <div class="form-group"><label class="form-label">Concessionária</label><select class="form-input form-select"><option>Todas</option><option>Concessionária Alpha</option><option>Concessionária Beta</option><option>Concessionária Gamma</option><option>Concessionária Delta</option></select></div>
+      <div class="form-group">
+        <label class="form-label">Status dos Indicadores</label>
+        <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:4px;">
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;"><input type="checkbox" style="accent-color:var(--color-success);" checked> Atingido</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;"><input type="checkbox" style="accent-color:var(--color-warning);" checked> Atenção</label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;"><input type="checkbox" style="accent-color:var(--color-danger);" checked> Abaixo da Meta</label>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:24px;">
+      <button class="btn btn-outline" onclick="closeFilterModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="applyFilter()"><i class="fa-solid fa-check"></i> Aplicar Filtros</button>
+    </div>
+  </div>
+</div>
+
+<!-- Invite User Modal -->
+<div id="inviteModal" class="modal-overlay hidden">
+  <div class="modal-box" style="max-width:460px;">
+    <div class="modal-header">
+      <div>
+        <div style="font-size:1rem;font-weight:700;color:var(--color-slate-900);">Convidar Usuário</div>
+        <div style="font-size:11px;color:var(--color-text-muted);margin-top:2px;">Envie um convite de acesso ao sistema</div>
+      </div>
+      <button class="modal-close" onclick="closeInviteModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div class="form-group"><label class="form-label">Nome Completo</label><input class="form-input" type="text" placeholder="Nome do usuário" /></div>
+      <div class="form-group"><label class="form-label">E-mail</label><input class="form-input" type="email" placeholder="email@concessionaria.com.br" /></div>
+      <div class="form-group"><label class="form-label">Perfil de Acesso</label><select class="form-input form-select"><option>Gerente Pós-Venda</option><option>Supervisor de Oficina</option><option>Consultor Técnico</option><option>Analista de Peças</option><option>Visualizador (Somente Leitura)</option></select></div>
+      <div class="form-group"><label class="form-label">Concessionária</label><select class="form-input form-select"><option>Concessionária Alpha</option><option>Concessionária Beta</option><option>Concessionária Gamma</option><option>Concessionária Delta</option></select></div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:24px;">
+      <button class="btn btn-outline" onclick="closeInviteModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="sendInvite()"><i class="fa-solid fa-paper-plane"></i> Enviar Convite</button>
+    </div>
+  </div>
+</div>
+
+<!-- Profile Modal -->
+<div id="profileModal" class="modal-overlay hidden">
+  <div class="modal-box" style="max-width:440px;">
+    <div class="modal-header">
+      <div style="font-size:1rem;font-weight:700;color:var(--color-slate-900);">Meu Perfil</div>
+      <button class="modal-close" onclick="closeProfileModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div style="display:flex;align-items:center;gap:16px;padding:16px;background:var(--color-slate-50);border-radius:var(--border-radius-lg);margin-bottom:20px;">
+      <div style="width:52px;height:52px;border-radius:50%;background:var(--color-primary);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:20px;flex-shrink:0;">G</div>
+      <div><div style="font-weight:600;font-size:15px;color:var(--color-slate-900);">Gerente Pós-Venda</div><div style="font-size:12px;color:var(--color-text-muted);">gerente@demo.horus.com.br</div><span class="badge badge-blue" style="margin-top:5px;display:inline-block;">Gerente</span></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="form-group"><label class="form-label">Nome</label><input class="form-input" type="text" value="Gerente Pós-Venda" /></div>
+      <div class="form-group"><label class="form-label">E-mail</label><input class="form-input" type="email" value="gerente@demo.horus.com.br" /></div>
+      <div class="form-group"><label class="form-label">Cargo</label><input class="form-input" type="text" value="Gerente Pós-Venda" /></div>
+      <div class="form-group"><label class="form-label">Telefone</label><input class="form-input" type="text" value="(11) 99999-0000" /></div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px;">
+      <button class="btn btn-outline" onclick="closeProfileModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveProfile()"><i class="fa-solid fa-check"></i> Salvar Perfil</button>
+    </div>
+  </div>
+</div>
+
+<!-- Change Password Modal -->
+<div id="passwordModal" class="modal-overlay hidden">
+  <div class="modal-box" style="max-width:400px;">
+    <div class="modal-header">
+      <div style="font-size:1rem;font-weight:700;color:var(--color-slate-900);">Alterar Senha</div>
+      <button class="modal-close" onclick="closePasswordModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="form-group"><label class="form-label">Senha Atual</label><input class="form-input" type="password" placeholder="••••••••" /></div>
+      <div class="form-group"><label class="form-label">Nova Senha</label><input class="form-input" type="password" placeholder="••••••••" /></div>
+      <div class="form-group"><label class="form-label">Confirmar Nova Senha</label><input class="form-input" type="password" placeholder="••••••••" /></div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px;">
+      <button class="btn btn-outline" onclick="closePasswordModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="savePassword()"><i class="fa-solid fa-lock"></i> Alterar Senha</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────
+// TOAST SYSTEM
+// ─────────────────────────────────────
+function showToast(msg, type) {
+  const icons = { success: 'fa-circle-check', error: 'fa-circle-xmark', info: 'fa-circle-info', warning: 'fa-triangle-exclamation' };
+  const colors = { success: '#10b981', error: '#ef4444', info: '#0083b9', warning: '#f59e0b' };
+  const t = type || 'success';
+  const toast = document.createElement('div');
+  toast.className = 'toast toast-' + t;
+  toast.innerHTML = `<i class="fa-solid ${icons[t] || icons.success}" style="color:${colors[t]};font-size:16px;flex-shrink:0;"></i><span>${msg}</span>`;
+  document.getElementById('toast-container').appendChild(toast);
+  setTimeout(() => { toast.classList.add('fade-out'); setTimeout(() => toast.remove(), 300); }, 3000);
+}
+
+// ─────────────────────────────────────
+// NAV & ROUTING
+// ─────────────────────────────────────
+const moduleNames = {
+  dashboard: 'Dashboard Gerencial',
+  diagnostico: 'Diagnóstico da Oficina',
+  metas: 'Metas Pós-Venda',
+  ias: 'Simulador IAS',
+  usuarios: 'Usuários do Sistema',
+  configuracoes: 'Configurações'
+};
+
+function showModule(id) {
+  document.querySelectorAll('.module').forEach(m => m.classList.add('hidden'));
+  const el = document.getElementById('mod-' + id);
+  el.classList.remove('hidden');
+  el.classList.remove('fade-in');
+  void el.offsetWidth;
+  el.classList.add('fade-in');
+
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.classList.toggle('active', item.dataset.module === id);
+  });
+
+  document.getElementById('headerTitle').textContent = moduleNames[id] || id;
+  closeSidebar();
+  setTimeout(() => initCharts(id), 60);
+}
+
+// ─────────────────────────────────────
+// LOGIN / LOGOUT
+// ─────────────────────────────────────
+function doLogin() {
+  const name = document.getElementById('loginConcessionaria').value;
+  document.getElementById('sidebarConcessionaria').textContent = name;
+  // Update avatar initial from concessionária name (last word before the dash or first letter)
+  const parts = name.split(/[\s—–-]/);
+  const initial = parts.find(p => p.length > 2 && !['Mercedes','Benz','C&O'].includes(p))?.charAt(0).toUpperCase() || name.charAt(0);
+  document.getElementById('sidebarAvatar').textContent = initial;
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('appScreen').classList.remove('hidden');
+  setTimeout(() => initCharts('dashboard'), 100);
+}
+function doLogout() {
+  document.getElementById('appScreen').classList.add('hidden');
+  document.getElementById('loginScreen').classList.remove('hidden');
+}
+
+// ─────────────────────────────────────
+// SIDEBAR (MOBILE)
+// ─────────────────────────────────────
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebar-overlay').classList.add('show');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('show');
+}
+
+// Handle mobile header button visibility
+function handleResize() {
+  const btn = document.getElementById('hamburgerBtn');
+  const closeBtn = document.querySelector('#sidebar button.lg\\:hidden');
+  if (window.innerWidth < 1024) {
+    if (btn) btn.style.display = 'block';
+    if (closeBtn) closeBtn.style.display = 'block';
+    document.getElementById('main-content').style.marginLeft = '0';
+  } else {
+    if (btn) btn.style.display = 'none';
+    if (closeBtn) closeBtn.style.display = 'none';
+    document.getElementById('main-content').style.marginLeft = '256px';
+    document.getElementById('sidebar').style.transform = '';
+    document.getElementById('sidebar-overlay').classList.remove('show');
+  }
+}
+window.addEventListener('resize', handleResize);
+handleResize();
+
+// ─────────────────────────────────────
+// TABS
+// ─────────────────────────────────────
+function switchTab(btn, panelId) {
+  const container = btn.closest('section');
+  container.querySelectorAll('.tab-panel').forEach(p => { p.classList.remove('active'); p.style.display = 'none'; });
+  btn.closest('div').querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const panel = document.getElementById(panelId);
+  panel.style.display = 'block';
+  panel.classList.add('active');
+  if (panelId === 'tab-dre') setTimeout(() => initCharts('dre'), 60);
+  if (panelId === 'tab-oficina') setTimeout(() => initCharts('metas'), 60);
+}
+const canalData = {
+  co:    { fat:'R$ 2,84M', fatDelta:'+R$ 221k vs mai', fatUp:true, nps:'72 pts', npsLabel:'NPS C&O',    npsDelta:'-3 pts vs mai', npsUp:false, cxi:'68,4%', cxiLabel:'CXI — C&O', cxiDelta:'+2,1pp vs mai', cxiUp:true,  mts:'85,0%', mtsDelta:'+1,2pp vs mai', mtsUp:true  },
+  vans:  { fat:'R$ 1,58M', fatDelta:'+R$ 94k vs mai',  fatUp:true, nps:'78 pts', npsLabel:'NPS Vans',   npsDelta:'+4 pts vs mai', npsUp:true,  cxi:'71,2%', cxiLabel:'CXI — Vans', cxiDelta:'-0,8pp vs mai', cxiUp:false, mts:'82,3%', mtsDelta:'-0,5pp vs mai', mtsUp:false },
+  total: { fat:'R$ 4,42M', fatDelta:'+R$ 315k vs mai', fatUp:true, nps:'74 pts', npsLabel:'NPS Total',  npsDelta:'+1 pts vs mai', npsUp:true,  cxi:'69,8%', cxiLabel:'CXI — Total',cxiDelta:'+1,3pp vs mai', cxiUp:true,  mts:'83,7%', mtsDelta:'+0,4pp vs mai', mtsUp:true  }
+};
+
+function switchCanalTab(btn, canal) {
+  btn.closest('div').querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const d = canalData[canal];
+  if (!d) return;
+  const icon = up => `<i class="fa-solid fa-arrow-trend-${up?'up':'down'}" style="margin-right:4px;"></i>`;
+  document.getElementById('kpiPSC').textContent = d.fat;
+  const pd = document.getElementById('kpiPSCDelta'); pd.innerHTML = icon(d.fatUp) + d.fatDelta; pd.className = 'kpi-delta ' + (d.fatUp ? 'up' : 'down');
+  document.getElementById('kpiNPS').textContent = d.nps;
+  document.getElementById('kpiNPSLabel').textContent = d.npsLabel;
+  const nd = document.getElementById('kpiNPSDelta'); nd.innerHTML = icon(d.npsUp) + d.npsDelta; nd.className = 'kpi-delta ' + (d.npsUp ? 'up' : 'down');
+  document.getElementById('kpiCXI').textContent = d.cxi;
+  document.getElementById('kpiCXILabel').textContent = d.cxiLabel;
+  const cd = document.getElementById('kpiCXIDelta'); cd.innerHTML = icon(d.cxiUp) + d.cxiDelta; cd.className = 'kpi-delta ' + (d.cxiUp ? 'up' : 'down');
+  document.getElementById('kpiMTS').textContent = d.mts;
+  const md = document.getElementById('kpiMTSDelta'); md.innerHTML = icon(d.mtsUp) + d.mtsDelta; md.className = 'kpi-delta ' + (d.mtsUp ? 'up' : 'down');
+}
+
+// ─────────────────────────────────────
+// SIMULADOR
+// ─────────────────────────────────────
+function calcularSimulador() {
+  const inputs = document.querySelectorAll('#mod-diagnostico input[type=number]');
+  const cap    = parseFloat(inputs[0].value) || 2640;
+  const efAt   = parseFloat(inputs[1].value) || 78;
+  const hh     = parseFloat(inputs[2].value) || 185;
+  const percInd= parseFloat(inputs[3].value) || 22;
+  const efMeta = parseFloat(inputs[4].value) || 88;
+
+  const hhAt   = cap * (efAt / 100);
+  const hhProj = cap * (efMeta / 100);
+  const fatAt  = hhAt   * hh * (1 + percInd / 100);
+  const fatProj= hhProj * hh * (1 + percInd / 100);
+  const ganho  = fatProj - fatAt;
+
+  const fmt = v => 'R$ ' + (v >= 1000 ? (v/1000).toFixed(1)+'K' : v.toFixed(0));
+  document.getElementById('simFatAtual').textContent = fmt(fatAt);
+  document.getElementById('simFatProj').textContent  = fmt(fatProj);
+  document.getElementById('simGanho').textContent    = '+' + fmt(ganho);
+}
+
+// ─────────────────────────────────────
+// CHARTS
+// ─────────────────────────────────────
+const chartReg = {};
+const MONTHS = ['Jan','Fev','Mar','Abr','Mai','Jun'];
+const C_PRIMARY   = '#ed7534';
+const C_SECONDARY = '#0083b9';
+const C_ACCENT    = '#6abfaf';
+const C_SUCCESS   = '#10b981';
+const C_DANGER    = '#ef4444';
+const C_WARNING   = '#f59e0b';
+const C_BORDER    = '#e2e8f0';
+
+function baseOpts(showLegend) {
+  return {
+    responsive: true,
+    plugins: {
+      legend: { display: showLegend, position: 'top', labels: { boxWidth: 10, font: { size: 11, family: 'Poppins' }, color: '#64748b' } },
+      tooltip: { backgroundColor: '#1c2241', titleColor: '#f1f5f9', bodyColor: '#94a3b8', padding: 10, cornerRadius: 8, titleFont: { family: 'Poppins' }, bodyFont: { family: 'Poppins' } }
+    },
+    scales: {
+      y: { grid: { color: '#f1f5f9' }, ticks: { color: '#94a3b8', font: { size: 10, family: 'Poppins' } } },
+      x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { size: 10, family: 'Poppins' } } }
+    }
+  };
+}
+
+function initCharts(mod) {
+  if (mod === 'dashboard') {
+    if (!chartReg.fat) {
+      chartReg.fat = new Chart(document.getElementById('chartFat'), {
+        type: 'line',
+        data: {
+          labels: MONTHS,
+          datasets: [
+            { label: 'Peças',    data: [890,920,980,850,1100,1087], borderColor: C_PRIMARY,   backgroundColor: 'rgba(237,117,52,0.08)',  tension: 0.4, fill: true, pointRadius: 4, borderWidth: 2.5 },
+            { label: 'Serviços', data: [650,680,720,700,780,851],   borderColor: C_SECONDARY, backgroundColor: 'rgba(0,131,185,0.06)',   tension: 0.4, fill: true, pointRadius: 4, borderWidth: 2.5 }
+          ]
+        },
+        options: baseOpts(true)
+      });
+    }
+    if (!chartReg.canal) {
+      chartReg.canal = new Chart(document.getElementById('chartCanal'), {
+        type: 'doughnut',
+        data: {
+          labels: ['C&O', 'Vans'],
+          datasets: [{ data: [64.3, 35.7], backgroundColor: [C_PRIMARY, C_SECONDARY], borderWidth: 0, hoverOffset: 6 }]
+        },
+        options: { plugins: { legend: { display: false } }, cutout: '72%', responsive: false }
+      });
+    }
+  }
+
+  if (mod === 'diagnostico') {
+    if (!chartReg.diag) {
+      chartReg.diag = new Chart(document.getElementById('chartDiag'), {
+        type: 'bar',
+        data: {
+          labels: MONTHS,
+          datasets: [
+            { label: 'Eficiência Real (%)', data: [74,76,80,75,79,78], backgroundColor: C_PRIMARY, borderRadius: 6 },
+            { label: 'Meta (%)',            data: [88,88,88,88,88,88], type: 'line', borderColor: C_DANGER, borderDash: [5,5], pointRadius: 0, fill: false, borderWidth: 2 }
+          ]
+        },
+        options: baseOpts(true)
+      });
+    }
+  }
+
+  if (mod === 'metas') {
+    if (!chartReg.oficina) {
+      chartReg.oficina = new Chart(document.getElementById('chartOficina'), {
+        type: 'bar',
+        data: {
+          labels: MONTHS,
+          datasets: [
+            { label: 'Realizado', data: [340,358,390,365,410,380], backgroundColor: C_PRIMARY,   borderRadius: 6 },
+            { label: 'Meta',      data: [400,400,400,400,420,420], backgroundColor: C_BORDER,    borderRadius: 6 }
+          ]
+        },
+        options: baseOpts(true)
+      });
+    }
+  }
+
+  if (mod === 'dre') {
+    if (!chartReg.dre) {
+      chartReg.dre = new Chart(document.getElementById('chartDRE'), {
+        type: 'bar',
+        data: {
+          labels: ['Receita Bruta', 'CMV + MO', 'Despesas Op.', 'EBITDA'],
+          datasets: [{ label: 'R$ mil', data: [3847,1185,1340,744], backgroundColor: [C_SECONDARY, C_DANGER, C_WARNING, C_SUCCESS], borderRadius: 8 }]
+        },
+        options: { ...baseOpts(false), indexAxis: 'y' }
+      });
+    }
+  }
+
+  if (mod === 'ias') {
+    if (!chartReg.ias) {
+      chartReg.ias = new Chart(document.getElementById('chartIAS'), {
+        type: 'line',
+        data: {
+          labels: MONTHS,
+          datasets: [
+            { label: 'Score IAS', data: [83.4,84.1,85.7,86.2,87.0,87.3], borderColor: C_PRIMARY,  backgroundColor: 'rgba(237,117,52,0.1)',  tension: 0.4, fill: true, pointRadius: 4, borderWidth: 2.5 },
+            { label: 'Meta',      data: [90,90,90,90,90,90],              borderColor: C_DANGER,   borderDash: [5,5], pointRadius: 0, fill: false, borderWidth: 2 }
+          ]
+        },
+        options: baseOpts(true)
+      });
+    }
+  }
+}
+
+// ─────────────────────────────────────
+// DROPDOWN PANELS
+// ─────────────────────────────────────
+function closeAllDropdowns() {
+  document.getElementById('notifDropdown').classList.add('hidden');
+  document.getElementById('userDropdown').classList.add('hidden');
+}
+function toggleNotifDropdown(e) {
+  e.stopPropagation();
+  const nd = document.getElementById('notifDropdown');
+  const ud = document.getElementById('userDropdown');
+  ud.classList.add('hidden');
+  nd.classList.toggle('hidden');
+}
+function toggleUserDropdown(e) {
+  e.stopPropagation();
+  const ud = document.getElementById('userDropdown');
+  const nd = document.getElementById('notifDropdown');
+  nd.classList.add('hidden');
+  ud.classList.toggle('hidden');
+}
+document.addEventListener('click', closeAllDropdowns);
+
+function marcarTodasLidas() {
+  closeAllDropdowns();
+  document.getElementById('notifBadge').style.display = 'none';
+  showToast('Todas as notificações marcadas como lidas', 'success');
+}
+
+// ─────────────────────────────────────
+// PERIOD SELECT
+// ─────────────────────────────────────
+function onPeriodChange(sel) {
+  showToast('Dados atualizados para ' + sel.value, 'info');
+}
+
+// ─────────────────────────────────────
+// FILTROS MODAL
+// ─────────────────────────────────────
+function showFilterModal() { document.getElementById('filterModal').classList.remove('hidden'); }
+function closeFilterModal() { document.getElementById('filterModal').classList.add('hidden'); }
+function applyFilter() {
+  closeFilterModal();
+  showToast('Filtros aplicados com sucesso', 'success');
+}
+
+// ─────────────────────────────────────
+// EXPORTAR
+// ─────────────────────────────────────
+function doExportar() {
+  const btn = document.getElementById('exportBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="font-size:10px;"></i> Exportando...';
+  setTimeout(() => {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa-solid fa-arrow-down" style="font-size:10px;"></i> Exportar';
+    showToast('Relatório exportado com sucesso (demo_junho_2026.xlsx)', 'success');
+  }, 1800);
+}
+
+// ─────────────────────────────────────
+// ESQUECI A SENHA
+// ─────────────────────────────────────
+function esqueceuSenha() {
+  const email = document.getElementById('loginEmail').value || 'gerente@demo.horus.com.br';
+  showToast('Link de redefinição enviado para ' + email, 'info');
+}
+
+// ─────────────────────────────────────
+// INVITE MODAL
+// ─────────────────────────────────────
+function openInviteModal() { document.getElementById('inviteModal').classList.remove('hidden'); }
+function closeInviteModal() { document.getElementById('inviteModal').classList.add('hidden'); }
+function sendInvite() {
+  closeInviteModal();
+  showToast('Convite enviado com sucesso!', 'success');
+}
+
+// ─────────────────────────────────────
+// PROFILE MODAL
+// ─────────────────────────────────────
+function openProfileModal() { document.getElementById('profileModal').classList.remove('hidden'); }
+function closeProfileModal() { document.getElementById('profileModal').classList.add('hidden'); }
+function saveProfile() {
+  closeProfileModal();
+  showToast('Perfil atualizado com sucesso', 'success');
+}
+
+// ─────────────────────────────────────
+// PASSWORD MODAL
+// ─────────────────────────────────────
+function openPasswordModal() { document.getElementById('passwordModal').classList.remove('hidden'); }
+function closePasswordModal() { document.getElementById('passwordModal').classList.add('hidden'); }
+function savePassword() {
+  closePasswordModal();
+  showToast('Senha alterada com sucesso', 'success');
+}
+
+// ─────────────────────────────────────
+// SETTINGS
+// ─────────────────────────────────────
+function saveSettings() {
+  showToast('Configurações salvas com sucesso', 'success');
+}
+
+// ─────────────────────────────────────
+// USER TABLE FILTER
+// ─────────────────────────────────────
+function filterUsers(query) {
+  const q = query.toLowerCase();
+  document.querySelectorAll('#usersTable tbody tr').forEach(row => {
+    row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+  });
+}
+</script>
+</body>
+</html>
