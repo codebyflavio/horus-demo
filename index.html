@@ -310,13 +310,14 @@
     .login-feature-card {
       background: linear-gradient(135deg, var(--color-teal-400) 0%, var(--color-navy-700) 100%);
       border-radius: 16px;
-      padding: 14px 12px;
+      padding: 10px;
       display: flex;
       flex-direction: column;
       justify-content: center;
-      gap: 8px;
+      gap: 6px;
       min-width: 0;
       aspect-ratio: 1 / 1;
+      overflow: hidden;
       box-shadow: 0 8px 20px rgba(0,0,0,0.25);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
@@ -324,8 +325,8 @@
       transform: translateY(-4px);
       box-shadow: 0 12px 26px rgba(0,0,0,0.32);
     }
-    .login-feature-card i { color: white; font-size: 17px; }
-    .login-feature-card span { color: white; font-weight: 700; font-size: 10.5px; line-height: 1.35; }
+    .login-feature-card i { color: white; font-size: 16px; flex-shrink: 0; }
+    .login-feature-card span { color: white; font-weight: 700; font-size: 9px; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
     .login-feature-cards { grid-template-columns: repeat(4, minmax(0,1fr)); }
     @media (max-width: 480px) {
       .login-feature-cards { grid-template-columns: repeat(2, minmax(0,1fr)) !important; }
