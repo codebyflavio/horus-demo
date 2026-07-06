@@ -431,9 +431,31 @@
       #main-content { margin-left: 0 !important; }
     }
 
+    @media (max-width: 768px) {
+      /* Colapsa qualquer grid de 2-3 colunas fixas (2fr 1fr, 1fr 1fr, repeat(3,1fr) etc) em 1 coluna */
+      #appScreen [style*="grid-template-columns"] {
+        grid-template-columns: minmax(0,1fr) !important;
+      }
+      main { padding: 14px !important; }
+      .app-header { padding: 0 var(--spacing-4); }
+      #headerTitle { font-size: 13px; }
+      .modal-box { padding: 18px; }
+      .modal-overlay { padding: 12px; }
+    }
+
     @media (max-width: 640px) {
       .kpi-value { font-size: 1.3rem; }
       .card, .chart-card, .kpi-card { padding: var(--spacing-4); }
+      /* Esconde o texto da data no header, mantem so o icone, para nao apertar o layout */
+      .app-header .header-date-label { display: none; }
+      .app-header { gap: 6px; }
+      .data-table { font-size: 11px; }
+      .data-table th, .data-table td { padding: 8px 10px; }
+    }
+
+    @media (max-width: 400px) {
+      main { padding: 10px !important; }
+      .btn { padding: 8px 10px !important; font-size: 11px !important; }
     }
   </style>
 </head>
@@ -667,7 +689,7 @@
       <div style="display:flex;align-items:center;gap:10px;">
         <div style="display:flex;align-items:center;gap:6px;background:var(--color-slate-50);border:1px solid var(--color-border);border-radius:var(--border-radius);padding:6px 12px;font-size:12px;color:var(--color-text-muted);">
           <i class="fa-regular fa-calendar" style="color:var(--color-text-light);"></i>
-          Jun / 2026
+          <span class="header-date-label">Jun / 2026</span>
         </div>
         <!-- Bell notifications -->
         <div style="position:relative;">
