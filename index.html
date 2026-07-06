@@ -425,10 +425,14 @@
     /* ─────────────────────────────────────────
        RESPONSIVE
     ───────────────────────────────────────── */
+    #hamburgerBtn { display: none; }
+    #sidebarCloseBtn { display: none; }
     @media (max-width: 1023px) {
       #sidebar { position: fixed; top: 0; left: 0; bottom: 0; z-index: 50; transform: translateX(-100%); }
       #sidebar.open { transform: translateX(0); }
       #main-content { margin-left: 0 !important; }
+      #hamburgerBtn { display: block; }
+      #sidebarCloseBtn { display: block; }
     }
 
     @media (max-width: 768px) {
@@ -451,6 +455,8 @@
       .app-header { gap: 6px; }
       .data-table { font-size: 11px; }
       .data-table th, .data-table td { padding: 8px 10px; }
+      /* Decoracao de canto do painel branco do login colide com o titulo em telas estreitas */
+      .login-corner-deco { display: none; }
     }
 
     @media (max-width: 400px) {
@@ -539,7 +545,7 @@
   <div class="w-full lg:w-1/2 order-1 lg:order-2 relative overflow-hidden" style="display:flex;align-items:center;justify-content:center;padding:32px;background:white;">
 
     <!-- Corner brand decoration — superior direito (espelho do canto esquerdo) -->
-    <div style="position:absolute;top:16px;right:16px;width:130px;height:135px;pointer-events:none;">
+    <div class="login-corner-deco" style="position:absolute;top:16px;right:16px;width:130px;height:135px;pointer-events:none;">
       <img src="assets/icone-cromado-escuro.png" style="position:absolute;top:80px;right:12px;width:48px;opacity:0.7;" alt="" />
       <img src="assets/icone-cromado-escuro.png" style="position:absolute;top:0;right:0;width:72px;opacity:0.95;" alt="" />
       <img src="assets/icone-cromado-escuro.png" style="position:absolute;top:2px;right:80px;width:40px;opacity:0.85;" alt="" />
@@ -613,7 +619,7 @@
           <div style="color:rgba(255,255,255,0.35);font-size:8px;font-weight:500;letter-spacing:0.1em;margin-top:1px;">GESTÃO PÓS-VENDA</div>
         </div>
       </div>
-      <button type="button" class="lg:hidden" onclick="closeSidebar()" style="background:none;border:none;color:#7e8db8;cursor:pointer;font-size:16px;display:none;" aria-label="Fechar menu">
+      <button type="button" id="sidebarCloseBtn" onclick="closeSidebar()" style="background:none;border:none;color:#7e8db8;cursor:pointer;font-size:16px;" aria-label="Fechar menu">
         <i class="fa-solid fa-xmark"></i>
       </button>
     </div>
@@ -680,7 +686,7 @@
 
     <!-- App header -->
     <header class="app-header">
-      <button type="button" id="hamburgerBtn" onclick="openSidebar()" style="display:none;background:none;border:none;color:var(--color-text-muted);cursor:pointer;font-size:20px;margin-right:12px;" aria-label="Abrir menu">
+      <button type="button" id="hamburgerBtn" onclick="openSidebar()" style="background:none;border:none;color:var(--color-text-muted);cursor:pointer;font-size:20px;margin-right:12px;" aria-label="Abrir menu">
         <i class="fa-solid fa-bars"></i>
       </button>
       <div style="flex:1;">
@@ -1575,20 +1581,11 @@ function closeSidebar() {
   document.getElementById('sidebar-overlay').classList.remove('show');
 }
 
-// Handle mobile header button visibility
+// Fecha a gaveta do menu mobile automaticamente se a tela crescer para desktop
+// (visibilidade do hamburguer/botao fechar e o margin-left do conteudo sao 100% CSS via media query)
 function handleResize() {
-  const btn = document.getElementById('hamburgerBtn');
-  const closeBtn = document.querySelector('#sidebar button.lg\\:hidden');
-  if (window.innerWidth < 1024) {
-    if (btn) btn.style.display = 'block';
-    if (closeBtn) closeBtn.style.display = 'block';
-    document.getElementById('main-content').style.marginLeft = '0';
-  } else {
-    if (btn) btn.style.display = 'none';
-    if (closeBtn) closeBtn.style.display = 'none';
-    document.getElementById('main-content').style.marginLeft = '256px';
-    document.getElementById('sidebar').style.transform = '';
-    document.getElementById('sidebar-overlay').classList.remove('show');
+  if (window.innerWidth >= 1024) {
+    closeSidebar();
   }
 }
 window.addEventListener('resize', handleResize);
